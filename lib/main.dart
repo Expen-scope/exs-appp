@@ -78,8 +78,9 @@ void main() async {
       ?.createNotificationChannel(channel);
 
   await Get.putAsync(() => SharedPreferences.getInstance());
-
   final userController = Get.put(UserController());
+  await userController.loadUserData();
+  await userController.initializeUser();
   await userController.loadUserData();
   await userController.initializeUser();
 
