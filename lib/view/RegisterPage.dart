@@ -1,0 +1,219 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controller/RegisterController.dart';
+import '../utils/dialog_helper.dart';
+
+class RegisterPage extends StatelessWidget {
+  final RegisterController controller = Get.put(RegisterController());
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    ever(controller.isLoading, (isLoading) {
+      if (!isLoading && _shouldShowSuccess()) {
+        _showSuccessDialog();
+      }
+    });
+    _listenForFieldErrors();
+//#006000
+//#F8FCF8
+//#DBF0DB
+    return Scaffold(
+      body: Container(
+        color: Color(0xFFF8FCF8),
+        width: double.infinity,
+        child: Padding(
+          padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.001),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                _buildLogo(),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                _buildRegisterForm(context),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogo() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Column(
+          children: [
+            Text("أبو نجيب",
+                style: TextStyle(fontSize: 26, color: Colors.white)),
+            Text("ABO NAJIB",
+                style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.white,
+                    fontFamily: "Tajawal-Bold.ttf")),
+          ],
+        ),
+        Image.asset('assets/Photo/khader (1).png', height: 160),
+      ],
+    );
+  }
+
+  Widget _buildRegisterForm(BuildContext context) {
+    return Container(
+
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.04),
+      child: Column(
+        children: [
+          _buildTextField("Enter your name",
+              (val) => controller.name.value = val, controller.nameError),
+          SizedBox(height:MediaQuery.of(context).size.width * 0.01),
+          _buildTextField("Enter Gmail", (val) => controller.email.value = val,
+              controller.emailError),
+          SizedBox(height:MediaQuery.of(context).size.width * 0.01),
+          // _buildTextField("Enter your Salary", (val) => controller.salary.value = val, controller.salaryError, keyboardType: TextInputType.number),
+          SizedBox(height:MediaQuery.of(context).size.width * 0.01),
+          _buildTextField(
+              "Enter Password",
+              (val) => controller.password.value = val,
+              controller.passwordError,
+              obscureText: true),
+          SizedBox(height:MediaQuery.of(context).size.width * 0.01),
+          _buildTextField(
+              "Confirm Password",
+              (val) => controller.confirmPassword.value = val,
+              controller.confirmPasswordError,
+              obscureText: true),
+          SizedBox(height: 20),
+          _buildRegisterButton(),
+          _buildLoginText(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+      String label, Function(String) onChanged, RxnString errorText,
+      {bool obscureText = false,
+      TextInputType keyboardType = TextInputType.text}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(color: Colors.white, fontSize: 16)),
+        SizedBox(height: 5),
+        Obx(() => TextFormField(
+              cursorColor: Color(0xFF006000),
+              obscureText: obscureText
+                  ? (label == "Enter Password"
+                      ? !controller.isPasswordVisible.value
+                      : !controller.isConfirmPasswordVisible.value)
+                  : false,
+              keyboardType: keyboardType,
+              decoration: InputDecoration(
+                hintText: label,
+                errorText: errorText.value,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Color(0xFF006000), width: 2),
+                ),
+                filled: true,
+                fillColor:  Color(0xFFDBF0DB),
+                suffixIcon: label.contains("Password")
+                    ? IconButton(
+                        icon: Icon(
+                          (label == "Enter Password"
+                                  ? controller.isPasswordVisible.value
+                                  : controller.isConfirmPasswordVisible.value)
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.black,
+                        ),
+                        onPressed: label == "Enter Password"
+                            ? controller.togglePasswordVisibility
+                            : controller.toggleConfirmPasswordVisibility,
+                      )
+                    : null,
+              ),
+              onChanged: onChanged,
+            )),
+      ],
+    );
+  }
+
+  Widget _buildRegisterButton() {
+    return Obx(() => SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 14),
+              backgroundColor: Color(0xFF006000),
+              shape:
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            onPressed:
+                controller.isLoading.value ? null : controller.registerUser,
+            child: controller.isLoading.value
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                        color: Colors.white, strokeWidth: 2))
+                : Text("Register",
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
+          ),
+    ));
+  }
+
+  Widget _buildLoginText() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("Already have an account?", style: TextStyle(color: Color(0xFF006000))),
+        TextButton(
+          onPressed: () => Get.offAllNamed("/Login"),
+          child: Text("Login", style: TextStyle(color: Color(0xFF006000))),
+        ),
+      ],
+    );
+  }
+
+  bool _shouldShowSuccess() {
+    return controller.nameError.value == null &&
+        controller.emailError.value == null &&
+        controller.passwordError.value == null &&
+        controller.confirmPasswordError.value == null;
+  }
+
+  void _showSuccessDialog() {
+    DialogHelper.showSuccessDialog(
+      title: "Success",
+      message: "The account has been created successfully",
+      onOkPressed: () => Get.offAllNamed('/Login'),
+    );
+  }
+
+  void _listenForFieldErrors() {
+    final errorListeners = [
+      controller.nameError,
+      controller.emailError,
+      controller.passwordError,
+      controller.confirmPasswordError,
+    ];
+
+    for (var error in errorListeners) {
+      ever(error, (value) {
+        if (value != null) {
+          DialogHelper.showErrorDialog(
+            title: "Error",
+            message: value,
+          );
+        }
+      });
+    }
+  }
+}

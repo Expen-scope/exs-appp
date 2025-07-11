@@ -1,0 +1,180 @@
+import 'package:abo_najib_2/const/Constants.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controller/LoginController.dart';
+
+class LoginPage extends GetView<LoginController> {
+  final _formKey = GlobalKey<FormState>();
+//#006000
+//#F8FCF8
+//#DBF0DB
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        color: Color(0xFFF8FCF8),
+        width: double.infinity,
+        child: Padding(
+          padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.005),
+          child: Form(
+            key: controller.formKey,
+            child: ListView(
+              children: [
+                SizedBox(height: MediaQuery.of(context).size.height * 0.12),
+                _buildLogo(),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                Container(
+                  // height: MediaQuery.of(context).size.height*0.4,
+                  // width: MediaQuery.of(context).size.width*0.8,
+                  padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.04),
+                  child: Column(
+                    children: [
+                      _buildTextField("Gmail", controller.emailController,
+                          "Enter a valid email address"),
+                      SizedBox(height: hight(context) * 0.001),
+                      _buildPasswordField(),
+                      SizedBox(height: hight(context) * 0.04),
+                      _buildLoginButton(context),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Don't have an account?",
+                              style: TextStyle(
+                                color: Color(0xFF006000),
+                              )),
+                          TextButton(
+                            onPressed: () => Get.toNamed("/Register"),
+                            child: Text("Register",
+                                style: TextStyle(
+                                  color: Color(0xFF006000),
+                                )),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogo() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Column(
+          children: [
+            Text("",
+                style: TextStyle(fontSize: 26, color: Colors.black)),
+            Text("Exs",
+                style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.black,
+                    fontFamily: "Tajawal-Bold.ttf")),
+          ],
+        ),
+        Image.asset('assets/Photo/khader (1).png', height: 160),
+      ],
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController textController,
+      String validationMsg) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(color: Colors.white, fontSize: 16)),
+        SizedBox(height: 5),
+        TextFormField(
+          cursorColor: Color(0xFF006000),
+          controller: textController,
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(
+            hintText: label,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Color(0xFF006000),
+                )),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Color(0xFF006000), width: 2),
+            ),
+            filled: true,
+            fillColor: Color(0xFFDBF0DB),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) return validationMsg;
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Password", style: TextStyle(color: Colors.white, fontSize: 16)),
+        SizedBox(height: 5),
+        Obx(() => TextFormField(
+              cursorColor: Color(0xFF006000),
+              controller: controller.passwordController,
+              obscureText: !controller.isPasswordVisible.value,
+              decoration: InputDecoration(
+                hintText: 'Password',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Color(0xFF006000),
+                    )),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Color(0xFF264653), width: 2),
+                ),
+                filled: true,
+                fillColor: Color(0xFFDBF0DB),
+                suffixIcon: IconButton(
+                  icon: Icon(controller.isPasswordVisible.value
+                      ? Icons.visibility
+                      : Icons.visibility_off),
+                  onPressed: controller.togglePasswordVisibility,
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) return "Enter the password";
+                return null;
+              },
+            )),
+      ],
+    );
+  }
+
+  Widget _buildLoginButton(BuildContext context) {
+    return Obx(() => SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 14),
+              backgroundColor: Color(0xFF006000),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onPressed: controller.validateInputs,
+            child: controller.isLoading.value
+                ? CircularProgressIndicator(color: Colors.white)
+                : Text(
+                    "LOGIN",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+          ),
+        ));
+  }
+}
