@@ -110,7 +110,7 @@ class IncomesScreens extends StatelessWidget {
             )),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor:  Color(0xFF006000),
+        backgroundColor: Color(0xFF006000),
         onPressed: () async {
           await Get.to(() => AddIncomes());
           controller.fetchIncomes();

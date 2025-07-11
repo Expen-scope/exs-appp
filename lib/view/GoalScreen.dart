@@ -123,7 +123,10 @@ class GoalsScreen extends StatelessWidget {
                       ],
                     ),
                     trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Color(0xFF006000),),
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Color(0xFF006000),
+                      ),
                       onPressed: () async {
                         bool success =
                             await goalController.deleteGoal(goal.id!);

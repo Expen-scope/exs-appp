@@ -163,7 +163,7 @@ class MyApp extends StatelessWidget {
           page: () => WelcomeScreen(),
         ),
       ],
-      initialRoute: '/HomePage',
+      initialRoute: '/MyCustomSplashScreen',
     );
   }
 }

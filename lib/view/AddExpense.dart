@@ -130,7 +130,7 @@ class _AddExpencesState extends State<AddExpences> {
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size.fromHeight(50),
-                  backgroundColor:  Color(0xFF006000),
+                  backgroundColor: Color(0xFF006000),
                   shadowColor: Colors.transparent,
                 ),
                 child: const Text(

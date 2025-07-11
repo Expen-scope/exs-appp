@@ -70,10 +70,10 @@ class FinancialController extends GetxController {
     ever(startDate, (_) => _processData());
     ever(endDate, (_) => _processData());
   }
+
   void changeTab(ActiveTab tab) {
     activeTab.value = tab;
   }
-
 
   Future<void> loadData() async {
     isLoading.value = true;

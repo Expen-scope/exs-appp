@@ -62,25 +62,22 @@ class RegisterPage extends StatelessWidget {
 
   Widget _buildRegisterForm(BuildContext context) {
     return Container(
-
       padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.04),
+          horizontal: MediaQuery.of(context).size.width * 0.05),
       child: Column(
         children: [
           _buildTextField("Enter your name",
               (val) => controller.name.value = val, controller.nameError),
-          SizedBox(height:MediaQuery.of(context).size.width * 0.01),
+          SizedBox(height: MediaQuery.of(context).size.width * 0.01),
           _buildTextField("Enter Gmail", (val) => controller.email.value = val,
               controller.emailError),
-          SizedBox(height:MediaQuery.of(context).size.width * 0.01),
-          // _buildTextField("Enter your Salary", (val) => controller.salary.value = val, controller.salaryError, keyboardType: TextInputType.number),
-          SizedBox(height:MediaQuery.of(context).size.width * 0.01),
+          SizedBox(height: MediaQuery.of(context).size.width * 0.01),
           _buildTextField(
               "Enter Password",
               (val) => controller.password.value = val,
               controller.passwordError,
               obscureText: true),
-          SizedBox(height:MediaQuery.of(context).size.width * 0.01),
+          SizedBox(height: MediaQuery.of(context).size.width * 0.01),
           _buildTextField(
               "Confirm Password",
               (val) => controller.confirmPassword.value = val,
@@ -112,6 +109,11 @@ class RegisterPage extends StatelessWidget {
                   : false,
               keyboardType: keyboardType,
               decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                    )),
                 hintText: label,
                 errorText: errorText.value,
                 border: OutlineInputBorder(
@@ -119,10 +121,10 @@ class RegisterPage extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Color(0xFF006000), width: 2),
+                  borderSide: BorderSide( color: Colors.white, width: 2),
                 ),
                 filled: true,
-                fillColor:  Color(0xFFDBF0DB),
+                fillColor: Color(0xFFDBF0DB),
                 suffixIcon: label.contains("Password")
                     ? IconButton(
                         icon: Icon(
@@ -147,13 +149,13 @@ class RegisterPage extends StatelessWidget {
 
   Widget _buildRegisterButton() {
     return Obx(() => SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
+          width: double.infinity,
+          child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 14),
               backgroundColor: Color(0xFF006000),
-              shape:
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24)),
             ),
             onPressed:
                 controller.isLoading.value ? null : controller.registerUser,
@@ -166,14 +168,15 @@ class RegisterPage extends StatelessWidget {
                 : Text("Register",
                     style: TextStyle(fontSize: 18, color: Colors.white)),
           ),
-    ));
+        ));
   }
 
   Widget _buildLoginText() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Already have an account?", style: TextStyle(color: Color(0xFF006000))),
+        Text("Already have an account?",
+            style: TextStyle(color: Color(0xFF006000))),
         TextButton(
           onPressed: () => Get.offAllNamed("/Login"),
           child: Text("Login", style: TextStyle(color: Color(0xFF006000))),
@@ -193,7 +196,7 @@ class RegisterPage extends StatelessWidget {
     DialogHelper.showSuccessDialog(
       title: "Success",
       message: "The account has been created successfully",
-      onOkPressed: () => Get.offAllNamed('/Login'),
+      onOkPressed: () => Get.toNamed("/Login"),
     );
   }
 

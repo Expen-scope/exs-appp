@@ -16,7 +16,7 @@ class LoginController extends GetxController {
   final Dio _dio = Dio(BaseOptions(
     baseUrl:
         Platform.isAndroid && !Platform.environment.containsKey('FLUTTER_TEST')
-            ? 'http://10.0.2.2:8000/api/auth'
+            ? 'http://0.0.0.0:8000/api/auth'
             : 'http://127.0.0.1:8000/api/auth',
     contentType: Headers.jsonContentType,
     connectTimeout: const Duration(seconds: 10),
@@ -110,7 +110,7 @@ class LoginController extends GetxController {
     DialogHelper.showSuccessDialog(
       title: "success",
       message: "You have been logged in successfully",
-        onOkPressed: () =>Get.offAllNamed('/HomePage'),
+      onOkPressed: () => Get.offAllNamed('/HomePage'),
     );
   }
 

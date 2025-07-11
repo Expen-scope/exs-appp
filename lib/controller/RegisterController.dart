@@ -22,7 +22,7 @@ class RegisterController extends GetxController {
   void toggleConfirmPasswordVisibility() => isConfirmPasswordVisible.toggle();
 
   final Dio.Dio dio = Dio.Dio(Dio.BaseOptions(
-    baseUrl: 'http://10.0.2.2:8000/api/auth',
+    baseUrl: 'http://0.0.0.0:8000/api',
     contentType: Dio.Headers.jsonContentType,
     validateStatus: (status) => status! < 500,
   ));
@@ -43,6 +43,12 @@ class RegisterController extends GetxController {
       passwordError.value = "You must enter the password";
     } else if (password.value.length < 8) {
       passwordError.value = "Password must be at least 8 characters long.";
+    } else if (!RegExp(r'[A-Z]').hasMatch(password.value)) {
+      passwordError.value = "Password must contain at least one uppercase letter.";
+    } else if (!RegExp(r'[0-9]').hasMatch(password.value)) {
+      passwordError.value = "Password must contain at least one number.";
+    } else if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password.value)) {
+      passwordError.value = "Password must contain at least one special character.";
     } else {
       passwordError.value = null;
     }
@@ -67,7 +73,7 @@ class RegisterController extends GetxController {
 
       try {
         final response = await dio.post(
-          '/register',
+          '/user/register',
           data: {
             'name': name.value,
             'email': email.value,

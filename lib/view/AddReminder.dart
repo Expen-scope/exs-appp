@@ -79,8 +79,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
       DialogHelper.showSuccessDialog(
         title: 'Success',
         message: 'Reminder added successfully',
-        onOkPressed: ()=>  Get.toNamed("/Reminder"),
-
+        onOkPressed: () => Get.toNamed("/Reminder"),
       );
     }
   }
@@ -275,11 +274,11 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: hight(context) * .1),
                 child: Container(
-            color: Color(0xFF006000),
+                  color: Color(0xFF006000),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size.fromHeight(50),
-                      backgroundColor:Color(0xFF006000),
+                      backgroundColor: Color(0xFF006000),
                       shadowColor: Colors.transparent,
                     ),
                     onPressed: saveReminder,

@@ -140,7 +140,7 @@ class Reminders extends StatelessWidget {
           await Get.to(() => AddReminderScreen());
         },
         tooltip: 'Add Reminder',
-        backgroundColor: const  Color(0xFF006000),
+        backgroundColor: const Color(0xFF006000),
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );

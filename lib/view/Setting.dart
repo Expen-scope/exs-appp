@@ -89,7 +89,7 @@ class _SettingState extends State<Setting> {
                         ? ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               minimumSize: Size(width(context) * 0.2, 50),
-                              backgroundColor:Color(0xFF006000),
+                              backgroundColor: Color(0xFF006000),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -219,8 +219,13 @@ class _SettingState extends State<Setting> {
       keyboardType: TextInputType.visiblePassword,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color:  Color(0xFF006000),),
-        prefixIcon: Icon(icon, color: const Color(0xFF006000),),
+        labelStyle: TextStyle(
+          color: Color(0xFF006000),
+        ),
+        prefixIcon: Icon(
+          icon,
+          color: const Color(0xFF006000),
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -228,7 +233,6 @@ class _SettingState extends State<Setting> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Color(0xFF006000), width: 2),
         ),
-
         contentPadding:
             const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
       ),

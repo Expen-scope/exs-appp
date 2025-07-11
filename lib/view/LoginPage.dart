@@ -27,7 +27,7 @@ class LoginPage extends GetView<LoginController> {
                   // height: MediaQuery.of(context).size.height*0.4,
                   // width: MediaQuery.of(context).size.width*0.8,
                   padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.04),
+                      horizontal: MediaQuery.of(context).size.width * 0.05),
                   child: Column(
                     children: [
                       _buildTextField("Gmail", controller.emailController,
@@ -69,8 +69,7 @@ class LoginPage extends GetView<LoginController> {
       children: [
         Column(
           children: [
-            Text("",
-                style: TextStyle(fontSize: 26, color: Colors.black)),
+            Text("", style: TextStyle(fontSize: 26, color: Colors.black)),
             Text("Exs",
                 style: TextStyle(
                     fontSize: 24,
@@ -95,15 +94,20 @@ class LoginPage extends GetView<LoginController> {
           controller: textController,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Colors.white,
+                )),
             hintText: label,
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: Color(0xFF006000),
+                  color: Colors.white,
                 )),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Color(0xFF006000), width: 2),
+              borderSide: BorderSide(color: Colors.white, width: 2),
             ),
             filled: true,
             fillColor: Color(0xFFDBF0DB),
@@ -128,15 +132,20 @@ class LoginPage extends GetView<LoginController> {
               controller: controller.passwordController,
               obscureText: !controller.isPasswordVisible.value,
               decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                    )),
                 hintText: 'Password',
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: Color(0xFF006000),
+                      color: Colors.white,
                     )),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Color(0xFF264653), width: 2),
+                  borderSide: BorderSide(color: Colors.white, width: 2),
                 ),
                 filled: true,
                 fillColor: Color(0xFFDBF0DB),
@@ -164,7 +173,7 @@ class LoginPage extends GetView<LoginController> {
               padding: EdgeInsets.symmetric(vertical: 14),
               backgroundColor: Color(0xFF006000),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(24),
               ),
             ),
             onPressed: controller.validateInputs,

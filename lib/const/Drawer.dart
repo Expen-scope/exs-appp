@@ -6,40 +6,40 @@ import '../controller/FinancialController.dart';
 import '../controller/user_controller.dart';
 import '../view/ReminderPage.dart';
 import 'Constants.dart';
+
 final UserController controller = Get.find<UserController>();
 
-
-Widget CustomDrawer (BuildContext context){
+Widget CustomDrawer(BuildContext context) {
   return Drawer(
     child: Column(
       children: [
         Obx(() => UserAccountsDrawerHeader(
-          accountName: Text(
-            // userController.user.value?.name ??
+              accountName: Text(
+                // userController.user.value?.name ??
                 'Guest',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          accountEmail: Text(
-            // userController.user.value?.email ??
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              accountEmail: Text(
+                // userController.user.value?.email ??
                 'No email',
-            style: const TextStyle(
-              fontSize: 14,
-            ),
-          ),
-          currentAccountPicture: CircleAvatar(
-            radius: width(context) * 0.16,
-            backgroundImage: controller.selectedImage.value != null
-                ? FileImage(controller.selectedImage.value!)
-            as ImageProvider
-                : const AssetImage('assets/Photo/me.jpg'),
-          ),
-          decoration: BoxDecoration(
-            color: Color(0xFF06402B),
-          ),
-        )),
+                style: const TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+              currentAccountPicture: CircleAvatar(
+                radius: width(context) * 0.16,
+                backgroundImage: controller.selectedImage.value != null
+                    ? FileImage(controller.selectedImage.value!)
+                        as ImageProvider
+                    : const AssetImage('assets/Photo/me.jpg'),
+              ),
+              decoration: BoxDecoration(
+                color: Color(0xFF06402B),
+              ),
+            )),
         Expanded(
           child: ListView(
             padding: EdgeInsets.zero,
@@ -83,6 +83,7 @@ Widget CustomDrawer (BuildContext context){
     ),
   );
 }
+
 Widget _buildDrawerItem({
   required IconData icon,
   required String title,

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-const Color primaryDarkColor = Color(0xFF006000);
+//#006000
+//#F8FCF8
+//#DBF0DB
+const Color primaryDarkColor = Color(0xFFF8FCF8);
 const Color primaryLightColor = Color(0xFFF8FCF8);
 const Color whiteColor = Colors.white;
 
@@ -23,41 +26,47 @@ class WelcomeScreen extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Column(
-                  children: [
-                    Image.asset('assets/Photo/Personal finance-bro.png'),
-                    const SizedBox(height: 30),
-                    Text(
-                      'Welcome to Abo Najib',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: whiteColor,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Column(
+                children: [
+                  Image.asset(
+                    'assets/Photo/photo_2025-07-11_16-23-44.jpg',
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.35,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.02),
+                  Text(
+                    'Welcome to Exs',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF006000),
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
                     ),
-                    const SizedBox(height: 15),
-                    Text(
-                      'Managing money has never been easier.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: whiteColor.withOpacity(0.85),
-                        fontSize: 16,
-                      ),
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.02),
+                  Text(
+                    'Track your expenses, analyze your spending, and achieve your financail goals with ease.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF006000),
+                      fontSize: 16,
                     ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    _buildAuthButton(
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.05,
+                        right: MediaQuery.of(context).size.width * 0.05,
+                        bottom: MediaQuery.of(context).size.width * 0.05),
+                    child: _buildAuthButton(
                       context: context,
                       label: 'Login',
                       onPressed: () {
@@ -66,8 +75,13 @@ class WelcomeScreen extends StatelessWidget {
                       backgroundColor: whiteColor,
                       textColor: primaryDarkColor,
                     ),
-                    const SizedBox(height: 15),
-                    _buildAuthButton(
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.05,
+                        right: MediaQuery.of(context).size.width * 0.05,
+                        bottom: MediaQuery.of(context).size.width * 0.1),
+                    child: _buildAuthButton(
                       context: context,
                       label: 'Register',
                       onPressed: () {
@@ -77,17 +91,16 @@ class WelcomeScreen extends StatelessWidget {
                       textColor: whiteColor,
                       borderColor: whiteColor,
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  // دالة مساعدة لإنشاء أزرار متجانسة
   Widget _buildAuthButton({
     required BuildContext context,
     required String label,
@@ -101,7 +114,7 @@ class WelcomeScreen extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
+          backgroundColor: Color(0xFF006000),
           foregroundColor: textColor,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
