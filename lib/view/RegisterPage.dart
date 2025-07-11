@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/RegisterController.dart';
@@ -9,12 +11,7 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ever(controller.isLoading, (isLoading) {
-      if (!isLoading && _shouldShowSuccess()) {
-        _showSuccessDialog();
-      }
-    });
-    _listenForFieldErrors();
+
 //#006000
 //#F8FCF8
 //#DBF0DB
@@ -185,38 +182,8 @@ class RegisterPage extends StatelessWidget {
     );
   }
 
-  bool _shouldShowSuccess() {
-    return controller.nameError.value == null &&
-        controller.emailError.value == null &&
-        controller.passwordError.value == null &&
-        controller.confirmPasswordError.value == null;
-  }
 
-  void _showSuccessDialog() {
-    DialogHelper.showSuccessDialog(
-      title: "Success",
-      message: "The account has been created successfully",
-      onOkPressed: () => Get.toNamed("/Login"),
-    );
-  }
 
-  void _listenForFieldErrors() {
-    final errorListeners = [
-      controller.nameError,
-      controller.emailError,
-      controller.passwordError,
-      controller.confirmPasswordError,
-    ];
 
-    for (var error in errorListeners) {
-      ever(error, (value) {
-        if (value != null) {
-          DialogHelper.showErrorDialog(
-            title: "Error",
-            message: value,
-          );
-        }
-      });
-    }
-  }
+
 }
