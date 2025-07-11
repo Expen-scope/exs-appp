@@ -1,59 +1,49 @@
+import 'dart:convert';
+
 class UserModel {
+  final int id;
   final String name;
   final String email;
-  final String token;
-  final int id;
+  final String? geminiApiKey;
+  final String? aiApiKey;
   final String createdAt;
   final String updatedAt;
-  final String? profileImageUrl;
-  final String? avatar;
 
   UserModel({
     required this.id,
     required this.name,
     required this.email,
-    required this.token,
+    this.geminiApiKey,
+    this.aiApiKey,
     required this.createdAt,
     required this.updatedAt,
-    this.profileImageUrl,
-    this.avatar,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['user']['id'] as int? ?? 0,
-      name: json['user']['name']?.toString() ?? 'غير معروف',
-      email: json['user']['email']?.toString() ?? 'بريد غير معروف',
-      token: json['authorisation']['token']?.toString() ?? '',
-      createdAt: json['user']['created_at']?.toString() ?? '',
-      updatedAt: json['user']['updated_at']?.toString() ?? '',
-      profileImageUrl: json['profileImageUrl'],
-      avatar: json['avatar'],
+      id: json['id'],
+      name: json['name'],
+      email: json['email'],
+      geminiApiKey: json['gemini_api_key'],
+      aiApiKey: json['ai_api_key'],
+      createdAt: json['created_at'],
+      updatedAt: json['updated_at'],
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'email': email,
-        'token': token,
-        'created_at': createdAt,
-        'updated_at': updatedAt,
-        'profileImageUrl': profileImageUrl,
-      };
-  UserModel copyWith({
-    String? name,
-    String? email,
-    String? profileImageUrl,
-  }) {
-    return UserModel(
-      name: name ?? this.name,
-      email: email ?? this.email,
-      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
-      id: id,
-      token: token,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-    );
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'gemini_api_key': geminiApiKey,
+      'ai_api_key': aiApiKey,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+    };
   }
+
+  String toJsonString() => json.encode(toJson());
+
+  factory UserModel.fromJsonString(String source) => UserModel.fromJson(json.decode(source));
 }

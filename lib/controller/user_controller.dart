@@ -22,7 +22,11 @@ class UserController extends GetxController {
     super.onInit();
     _initPrefs();
   }
-
+  void clearUser() {
+    user.value = null;
+    isLoggedIn.value = false;
+    print("User data cleared and logged out.");
+  }
   Future<void> _loadToken() async {
     final prefs = await SharedPreferences.getInstance();
     authToken = prefs.getString('auth_token');
