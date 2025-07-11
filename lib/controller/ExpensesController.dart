@@ -1,154 +1,183 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../model/Expenses.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../model/Expenses.dart';
+import '../view/AddExpense.dart'; // تأكد من المسار الصحيح
 
 class ExpencesController extends GetxController {
+  // --- State Variables ---
   var listExpenses = <Expense>[].obs;
-  final String baseUrl = "http://10.0.2.2:8000/api/";
-  late String? authToken;
+  var expenseCategories = <String>[].obs;
+  var isDataLoading = false.obs;
 
-  final List<String> categories = [
-    "Food & Drinks",
-    "Shopping",
-    "Housing",
-    "Transportation",
-    "Vehicle",
-    "Others"
+  // --- Configuration ---
+  final String baseUrl = "http://10.0.2.2:8000/api";
+  final _storage = const FlutterSecureStorage();
+  String? authToken;
+
+  final List<String> _defaultExpenseCategories = [
+    'Housing',
+    'Utilities',
+    'Transportation',
+    'Groceries',
+    'Dining Out',
+    'Healthcare',
+    'Insurance',
+    'Debt Payments',
+    'Entertainment',
+    'Personal Care'
   ];
 
-  final Map<String, ExpenseInfo> expenseData = {
-    "Food & Drinks": ExpenseInfo(
-        color: Color(0xffaa52ea),
-        icon: Icon(
-          Icons.fastfood,
-          color: Color(0xffaa52ea),
-        )),
-    "Shopping": ExpenseInfo(
-        color: Color(0xff75c79f),
-        icon: Icon(
-          Icons.shopping_cart,
-          color: Color(0xff75c79f),
-        )),
-    "Housing": ExpenseInfo(
-        color: Color(0xfffb4b41),
-        icon: Icon(
-          Icons.home,
-          color: Color(0xfffb4b41),
-        )),
-    "Transportation": ExpenseInfo(
-        color: Color(0xff4c62f0),
-        icon: Icon(
-          Icons.directions_bus,
-          color: Color(0xff4c62f0),
-        )),
-    "Vehicle": ExpenseInfo(
-        color: Color(0xffbcbf7d),
-        icon: Icon(
-          Icons.directions_car,
-          color: Color(0xffbcbf7d),
-        )),
-    "Others": ExpenseInfo(
-        color: Color(0xff61bbdb),
-        icon: Icon(
-          Icons.category,
-          color: Color(0xff61bbdb),
-        )),
-  };
-
+  // --- Lifecycle ---
   @override
   void onInit() {
     super.onInit();
-    _loadToken();
+    // قم بتهيئة القائمة الافتراضية فوراً
+    expenseCategories.assignAll(_defaultExpenseCategories);
+    _loadTokenAndFetchData();
   }
 
-  Future<void> _loadToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    authToken = prefs.getString('auth_token');
+  // --- Data Loading ---
+  Future<void> reloadDataAfterLogin() async {
+    print("[ExpensesCtrl] 🔄 Reloading data after successful login...");
+    await _loadTokenAndFetchData();
+  }
+
+  Future<void> _loadTokenAndFetchData() async {
+    authToken = await _storage.read(key: 'access_token');
     if (authToken == null) {
-      Get.offAllNamed('/Login');
+      print("[ExpensesCtrl] ❌ Auth token not found.");
       return;
     }
-    await fetchExpenses();
+    print("[ExpensesCtrl] ✅ Auth token loaded.");
+    await Future.wait([
+      fetchExpenses(),
+      fetchCategories(),
+    ]);
   }
 
-  Map<String, String> get _headers {
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $authToken',
-    };
+  // --- API Calls ---
+
+  Future<void> fetchCategories() async {
+    if (authToken == null) return;
+    try {
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      };
+      final response =
+          await http.get(Uri.parse('$baseUrl/categories'), headers: headers);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final customCategories = List<String>.from(data['expense_categories']);
+        final combinedSet = {..._defaultExpenseCategories, ...customCategories};
+        expenseCategories.assignAll(combinedSet.toList());
+      } else {
+        print(
+            "Failed to load categories, using defaults. Status: ${response.statusCode}");
+        expenseCategories.assignAll(_defaultExpenseCategories);
+      }
+    } catch (e) {
+      print("Error fetching categories: $e");
+      expenseCategories.assignAll(_defaultExpenseCategories);
+    }
   }
 
   Future<void> fetchExpenses() async {
+    if (authToken == null) return;
+    isDataLoading.value = true;
     try {
-      final response = await http.get(
-        Uri.parse('${baseUrl}Expense'),
-        headers: _headers,
-      );
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      };
+      final response = await http.get(Uri.parse('$baseUrl/user/transactions'),
+          headers: headers);
 
       if (response.statusCode == 200) {
-        var data = json.decode(response.body)['data'] as List;
-        listExpenses.value = data.map((e) => Expense.fromJson(e)).toList();
-        listExpenses.refresh();
+        final responseData = json.decode(response.body);
+        // تأكد من أن الـ response يحتوي على مفتاح 'data' وهو عبارة عن List
+        if (responseData is List) {
+          final expenseData = responseData
+              .where((e) => e['type_transaction'] == 'expense')
+              .toList();
+          listExpenses.value =
+              expenseData.map((e) => Expense.fromJson(e)).toList();
+        } else if (responseData['data'] is List) {
+          final data = responseData['data'] as List;
+          final expenseData =
+              data.where((e) => e['type_transaction'] == 'expense').toList();
+          listExpenses.value =
+              expenseData.map((e) => Expense.fromJson(e)).toList();
+        }
       } else {
-        Get.snackbar('Error', 'Failed to load expenses');
+        Get.snackbar('Error Fetching',
+            'Failed to load expenses. Status: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error details: $e');
-      Get.snackbar('Error', 'Failed to load expenses');
+      Get.snackbar('Error', 'An error occurred during fetchExpenses: $e');
+    } finally {
+      isDataLoading.value = false;
     }
   }
 
   Future<void> addExpense(Expense expense) async {
+    if (authToken == null) {
+      Get.snackbar("Authentication Error", "Please log in again.");
+      return;
+    }
     try {
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      };
       final response = await http.post(
-        Uri.parse('${baseUrl}addExpense'),
-        headers: _headers,
-        body: json.encode({
-          'price': expense.value.toString(),
-          'category': expense.type,
-          'name_of_expense': expense.name,
-          'time': expense.date,
-        }),
+        Uri.parse('$baseUrl/user/transactions'),
+        headers: headers,
+        body: json.encode(expense.toJson()),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        Get.snackbar('Success', 'Expense added successfully!');
         await fetchExpenses();
-        print('Updated list: ${listExpenses.length} items');
-      } else {
-        Get.snackbar('Error', 'Failed to add expense');
+        Get.back();       } else {
+        print(
+            'Failed to add expense. Status: ${response.statusCode}, Body: ${response.body}');
+        Get.snackbar(
+            'Error Adding', 'Failed to add expense. Please try again.');
       }
-    } catch (e, stackTrace) {
-      print('Error details: $e');
-      print('Stack trace: $stackTrace');
-      Get.snackbar('Error', 'Failed to add expense');
+    } catch (e) {
+      Get.snackbar('Error', 'An error occurred: $e');
     }
   }
 
   Future<void> removeExpense(int id) async {
+    if (authToken == null) return;
     try {
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      };
       final response = await http.delete(
-        Uri.parse('${baseUrl}deleteExpense/$id'),
-        headers: _headers,
-      );
+          Uri.parse('$baseUrl/user/transactions/$id'),
+          headers: headers);
 
       if (response.statusCode == 200) {
-        await fetchExpenses();
+        Get.snackbar('Success', 'Expense removed successfully!');
+        listExpenses.removeWhere((exp) => exp.id == id);
       } else {
-        Get.snackbar('Error', 'Failed to remove expense');
+        Get.snackbar('Error Deleting',
+            'Failed to remove expense. Status: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error details: $e'); // أضف هذا السطر
-      Get.snackbar('Error', 'Failed to load expenses');
+      Get.snackbar('Error', 'An error occurred: $e');
     }
   }
-}
-
-class ExpenseInfo {
-  final Color color;
-  final Icon icon;
-
-  ExpenseInfo({required this.color, required this.icon});
 }

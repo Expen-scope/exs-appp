@@ -41,12 +41,12 @@ class ExpencesScreens extends StatelessWidget {
                               ),
                             ]
                           : controller.listExpenses.map((expense) {
-                              final type = expense.type;
-                              final expenseInfo = controller.expenseData[type];
+                              final type = expense.category;
+                              // final expenseInfo = controller.expenseData[type];
                               return PieChartSectionData(
-                                value: expense.value,
-                                color: expenseInfo?.color ?? Colors.grey,
-                                title: expense.value.toString(),
+                                value: expense.price,
+                                // color: expenseInfo?.color ?? Colors.grey,
+                                title: expense.price.toString(),
                                 radius: 50,
                                 titleStyle: const TextStyle(
                                   fontSize: 12,
@@ -68,7 +68,7 @@ class ExpencesScreens extends StatelessWidget {
                   itemCount: controller.listExpenses.length,
                   itemBuilder: (context, index) {
                     final expense = controller.listExpenses[index];
-                    final expenseInfo = controller.expenseData[expense.type];
+                    // final expenseInfo = controller.expens/eData[expense.category];
 
                     return Card(
                       elevation: 5,
@@ -81,16 +81,16 @@ class ExpencesScreens extends StatelessWidget {
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(15),
                         leading: CircleAvatar(
-                          backgroundColor:
-                              expenseInfo?.color?.withOpacity(0.2) ??
-                                  const Color(0xFFe76f51).withOpacity(0.2),
-                          child: Icon(
-                            expenseInfo?.icon?.icon ?? Icons.money_off,
-                            color: const Color(0xFF264653),
-                          ),
+                          // backgroundColor:
+                          //     expenseInfo?.color?.withOpacity(0.2) ??
+                          //         const Color(0xFFe76f51).withOpacity(0.2),
+                          // child: Icon(
+                          //   expenseInfo?.icon?.icon ?? Icons.money_off,
+                          //   color: const Color(0xFF264653),
+                          // ),
                         ),
-                        title: Text(expense.name),
-                        subtitle: Text("\$${expense.value.toStringAsFixed(2)}"),
+                        title: Text(expense.source),
+                        subtitle: Text("\$${expense.price.toStringAsFixed(2)}"),
                         trailing: IconButton(
                             icon: const Icon(Icons.delete,
                                 color: Color(0xFF264653)),
@@ -111,9 +111,7 @@ class ExpencesScreens extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color(0xFF006000),
         onPressed: () async {
-          await Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => AddExpences(),
-          ));
+          Get.toNamed("/AddExpences");
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),

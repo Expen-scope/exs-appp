@@ -1,34 +1,43 @@
 class Expense {
   final int? id;
-  final String name;
-  final double value;
-  final String type;
+  final String source;
+  final double price;
+  final String category;
+  final String currency;
+  final String? description;
   final String date;
 
   Expense({
     this.id,
-    required this.name,
-    required this.value,
-    required this.type,
+    required this.source,
+    required this.price,
+    required this.category,
+    required this.currency,
+    this.description,
     required this.date,
   });
 
   factory Expense.fromJson(Map<String, dynamic> json) {
     return Expense(
       id: json['id'],
-      name: json['name_of_expense'],
-      value: double.parse(json['price'].toString()),
-      type: json['category'],
-      date: json['time'],
+      source: json['source'] ?? 'Unknown Source',
+      price: double.parse(json['price'].toString()),
+      category: json['category'] ?? 'Uncategorized',
+      currency: json['currency'] ?? 'N/A',
+      description: json['description'],
+      date: json['date'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'name_of_expense': name,
-      'price': value.toString(),
-      'category': type,
-      'time': date,
+      'type_transaction': 'expense',
+      'source': source,
+      'category': category,
+      'price': price,
+      'currency': currency,
+      'description': description,
+      'date': date,
     };
   }
 }
