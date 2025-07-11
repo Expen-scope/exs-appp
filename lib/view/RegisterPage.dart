@@ -11,7 +11,6 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
 //#006000
 //#F8FCF8
 //#DBF0DB
@@ -19,41 +18,33 @@ class RegisterPage extends StatelessWidget {
       body: Container(
         color: Color(0xFFF8FCF8),
         width: double.infinity,
-        child: Padding(
-          padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.001),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              children: [
-                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                _buildLogo(),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                _buildRegisterForm(context),
-              ],
-            ),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              _buildLogo(context),
+              _buildRegisterForm(context),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildLogo() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Column(
-          children: [
-            Text("أبو نجيب",
-                style: TextStyle(fontSize: 26, color: Colors.white)),
-            Text("ABO NAJIB",
-                style: TextStyle(
-                    fontSize: 24,
-                    color: Colors.white,
-                    fontFamily: "Tajawal-Bold.ttf")),
-          ],
-        ),
-        Image.asset('assets/Photo/khader (1).png', height: 160),
-      ],
+  Widget _buildLogo(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: MediaQuery.of(context).size.height * 0.05),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Container(
+            height: MediaQuery.of(context).size.height * 0.30,
+            child: Image.asset(
+              'assets/Photo/1.png',
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -96,7 +87,6 @@ class RegisterPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: TextStyle(color: Colors.white, fontSize: 16)),
-        SizedBox(height: 5),
         Obx(() => TextFormField(
               cursorColor: Color(0xFF006000),
               obscureText: obscureText
@@ -118,7 +108,7 @@ class RegisterPage extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide( color: Colors.white, width: 2),
+                  borderSide: BorderSide(color: Colors.white, width: 2),
                 ),
                 filled: true,
                 fillColor: Color(0xFFDBF0DB),
@@ -181,9 +171,4 @@ class RegisterPage extends StatelessWidget {
       ],
     );
   }
-
-
-
-
-
 }

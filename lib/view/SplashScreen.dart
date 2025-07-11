@@ -19,48 +19,42 @@ class _MyCustomSplashScreenState extends State<MyCustomSplashScreen>
 
   @override
   void initState() {
+
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: Duration(seconds: 3));
-    animation1 = Tween<double>(begin: 40, end: 20).animate(
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+    animation1 = Tween<double>(begin: 20.0, end: 40.0).animate(
       CurvedAnimation(
-          parent: _controller, curve: Curves.fastLinearToSlowEaseIn),
-    )..addListener(() {
-        setState(() {
-          _textOpacity = 1.0;
-        });
-      });
+        parent: _controller,
+        curve: Curves.easeIn,
+      ),
+    );
 
     _controller.forward();
 
-    Timer(Duration(seconds: 2), () {
-      setState(() => _fontSize = 1.06);
-    });
+    _checkAuthAndNavigate();
+  }
 
-    Timer(Duration(seconds: 2), () {
-      setState(() {
-        _containerSize = 2;
-        _containerOpacity = 1;
-      });
-    });
+  Future<void> _checkAuthAndNavigate() async {
+    final UserController userController = Get.find();
+    await userController.initializeUser();
 
-    Future.delayed(Duration(seconds: 3), () async {
-      final userController = Get.find<UserController>();
-      try {
-        await userController.initializeUser();
-        if (userController.isLoggedIn.value) {
-          Get.offAllNamed('/HomePage');
-        } else {
-          Get.offAllNamed('/WelcomeScreen');
-        }
-      } catch (e) {
-        Get.offAllNamed('/WelcomeScreen');
-      }
-    });
+    await Future.delayed(const Duration(seconds: 3));
+
+
+    if (userController.isLoggedIn.value) {
+      Get.offAllNamed('/HomePage');
+    } else {
+      Get.offAllNamed('/Login');
+    }
   }
 
   @override
   void dispose() {
+
     _controller.dispose();
     super.dispose();
   }

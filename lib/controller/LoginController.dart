@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/User.dart';
 import '../utils/dialog_helper.dart';
+import 'ExpensesController.dart';
 
 class LoginController extends GetxController {
   final Dio.Dio dio = Dio.Dio(Dio.BaseOptions(
@@ -46,6 +47,8 @@ class LoginController extends GetxController {
         final user = UserModel.fromJson(response.data['user']);
         final accessToken = response.data['access_token'];
         final n8nToken = response.data['n8n_session_token'];
+print("$accessToken");
+        print("$n8nToken");
 
         await _saveAuthData(user, accessToken, n8nToken);
 
@@ -64,7 +67,6 @@ class LoginController extends GetxController {
       isLoading.value = false;
     }
   }
-
   Future<void> _saveAuthData(
       UserModel user, String accessToken, String n8nToken) async {
     await _storage.write(key: 'access_token', value: accessToken);
@@ -73,13 +75,30 @@ class LoginController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_data', user.toJsonString());
 
-    final userController = Get.find<UserController>();
-    userController.user.value = user;
-    userController.isLoggedIn.value = true;
+    Get.find<UserController>()..user.value = user..isLoggedIn.value = true;
+
+    if (Get.isRegistered<ExpencesController>()) {
+      await Get.find<ExpencesController>().reloadDataAfterLogin();
+    }
+
 
     print('Access Token saved successfully.');
-    print('N8N Session Token saved successfully.');
   }
+  // Future<void> _saveAuthData(
+  //     UserModel user, String accessToken, String n8nToken) async {
+  //   await _storage.write(key: 'access_token', value: accessToken);
+  //   await _storage.write(key: 'n8n_session_token', value: n8nToken);
+  //
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setString('user_data', user.toJsonString());
+  //
+  //   final userController = Get.find<UserController>();
+  //   userController.user.value = user;
+  //   userController.isLoggedIn.value = true;
+  //
+  //   print('Access Token saved successfully.');
+  //   print('N8N Session Token saved successfully.');
+  // }
 
   Future<void> logout() async {
     DialogHelper.showConfirmDialog(
@@ -123,7 +142,8 @@ class LoginController extends GetxController {
     DialogHelper.showSuccessDialog(
       title: "Success",
       message: "You have been logged in successfully.",
-      onOkPressed: () => Get.offAllNamed('/HomePage'), // اذهب للصفحة الرئيسية
+
+      onOkPressed: () => Get.offAllNamed('/HomePage'),
     );
   }
 }

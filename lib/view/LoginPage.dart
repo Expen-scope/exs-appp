@@ -20,12 +20,10 @@ class LoginPage extends GetView<LoginController> {
             key: controller.formKey,
             child: ListView(
               children: [
-                SizedBox(height: MediaQuery.of(context).size.height * 0.12),
-                _buildLogo(),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                _buildLogo(context),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                 Container(
-                  // height: MediaQuery.of(context).size.height*0.4,
-                  // width: MediaQuery.of(context).size.width*0.8,
                   padding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width * 0.05),
                   child: Column(
@@ -63,22 +61,17 @@ class LoginPage extends GetView<LoginController> {
     );
   }
 
-  Widget _buildLogo() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Column(
-          children: [
-            Text("", style: TextStyle(fontSize: 26, color: Colors.black)),
-            Text("Exs",
-                style: TextStyle(
-                    fontSize: 24,
-                    color: Colors.black,
-                    fontFamily: "Tajawal-Bold.ttf")),
-          ],
-        ),
-        Image.asset('assets/Photo/khader (1).png', height: 160),
-      ],
+  Widget _buildLogo(BuildContext context) {
+    return Padding(
+      padding:  EdgeInsets.only(left: MediaQuery.of(context).size.height*0.05),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+
+          Image.asset('assets/Photo/1.png', height: MediaQuery.of(context).size.height*0.28,
+          ),
+        ],
+      ),
     );
   }
 
