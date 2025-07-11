@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:dio/dio.dart' as Dio;
 
 import '../utils/dialog_helper.dart';
-// import '../view/VerificationScreen.dart';
 
 class RegisterController extends GetxController {
   var name = ''.obs;
@@ -22,7 +21,7 @@ class RegisterController extends GetxController {
   void toggleConfirmPasswordVisibility() => isConfirmPasswordVisible.toggle();
 
   final Dio.Dio dio = Dio.Dio(Dio.BaseOptions(
-    baseUrl: 'http://0.0.0.0:8000/api',
+    baseUrl: 'http://10.0.2.2:8000/api',
     contentType: Dio.Headers.jsonContentType,
     validateStatus: (status) => status! < 500,
   ));
@@ -127,10 +126,13 @@ class RegisterController extends GetxController {
     DialogHelper.showSuccessDialog(
       title: "success",
       message: "The account has been created successfully",
+      onOkPressed: () {
+       Get.toNamed("/Login");
+      },
     );
   }
 
   void showErrorDialog(String message) {
-    DialogHelper.showSuccessDialog(title: "Erorr", message: message);
+    DialogHelper.showErrorDialog(title: "Error", message: message);
   }
 }
