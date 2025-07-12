@@ -21,7 +21,7 @@ class _AddExpencesState extends State<AddExpences> {
   final TextEditingController descriptionController = TextEditingController();
 
   final RxnString selectedCategory = RxnString(null);
-  var  type_transaction;
+  var type_transaction;
 
   final ExpencesController controller = Get.find<ExpencesController>();
 
@@ -126,7 +126,7 @@ class _AddExpencesState extends State<AddExpences> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 16),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.04),
             _buildTextField(
                 controller: sourceController, label: "Expense Source"),
             _buildTextField(
@@ -137,7 +137,8 @@ class _AddExpencesState extends State<AddExpences> {
             _buildTextField(
                 controller: descriptionController, label: "Description"),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: hight(context) * 0.01),
+              padding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.01),
               child: Obx(() {
                 if (controller.expenseCategories.isEmpty) {
                   return const Center(
@@ -149,21 +150,40 @@ class _AddExpencesState extends State<AddExpences> {
                       ? selectedCategory.value
                       : controller.expenseCategories.first;
 
-                  return DropdownButtonFormField<String>(
-                    value: currentSelection,
-                    items: controller.expenseCategories
-                        .map((category) => DropdownMenuItem(
-                            value: category, child: Text(category)))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedCategory.value = value;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: "Select Category",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: hight(Get.context!) * .007),
+                    child: DropdownButtonFormField<String>(
+                      dropdownColor: Color(0xFFF8FCF8),
+                      value: currentSelection,
+                      items: controller.expenseCategories.map((category) {
+                        final categoryInfo =
+                            controller.expenseCategoriesData[category] ??
+                                ExpenseCategoryInfo(
+                                    color: Colors.grey,
+                                    icon: Icon(Icons.category));
+                        return DropdownMenuItem<String>(
+                          value: category,
+                          child: Row(
+                            children: [
+                              Icon(categoryInfo.icon.icon,
+                                  color: categoryInfo.color),
+                              const SizedBox(width: 8),
+                              Text(category),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCategory.value = value;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Select Category",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
                     ),
                   );
                 }
@@ -190,7 +210,8 @@ class _AddExpencesState extends State<AddExpences> {
                     valueController.text.isNotEmpty &&
                     currencyController.text.isNotEmpty &&
                     selectedCategory.value != null) {
-                  final String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+                  final String formattedDate =
+                      DateFormat('yyyy-MM-dd').format(DateTime.now());
 
                   final newExpense = Expense(
                     source: sourceController.text,

@@ -42,11 +42,17 @@ class ExpencesScreens extends StatelessWidget {
                             ]
                           : controller.listExpenses.map((expense) {
                               final type = expense.category;
-                              // final expenseInfo = controller.expenseData[type];
+                              final categoryInfo =
+                                  controller.expenseCategoriesData[
+                                          expense.category] ??
+                                      ExpenseCategoryInfo(
+                                          color: Colors.grey,
+                                          icon: Icon(Icons.category));
+
                               return PieChartSectionData(
                                 value: expense.price,
-                                // color: expenseInfo?.color ?? Colors.grey,
-                                title: expense.price.toString(),
+                                color: categoryInfo.color,
+                                title: "\$${expense.price.toStringAsFixed(0)}",
                                 radius: 50,
                                 titleStyle: const TextStyle(
                                   fontSize: 12,
@@ -68,7 +74,10 @@ class ExpencesScreens extends StatelessWidget {
                   itemCount: controller.listExpenses.length,
                   itemBuilder: (context, index) {
                     final expense = controller.listExpenses[index];
-                    // final expenseInfo = controller.expens/eData[expense.category];
+                    final categoryInfo =
+                        controller.expenseCategoriesData[expense.category] ??
+                            ExpenseCategoryInfo(
+                                color: Colors.grey, icon: Icon(Icons.category));
 
                     return Card(
                       elevation: 5,
@@ -81,13 +90,11 @@ class ExpencesScreens extends StatelessWidget {
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(15),
                         leading: CircleAvatar(
-                          // backgroundColor:
-                          //     expenseInfo?.color?.withOpacity(0.2) ??
-                          //         const Color(0xFFe76f51).withOpacity(0.2),
-                          // child: Icon(
-                          //   expenseInfo?.icon?.icon ?? Icons.money_off,
-                          //   color: const Color(0xFF264653),
-                          // ),
+                          backgroundColor: categoryInfo.color.withOpacity(0.2),
+                          child: Icon(
+                            categoryInfo.icon.icon,
+                            color: const Color(0xFF264653),
+                          ),
                         ),
                         title: Text(expense.source),
                         subtitle: Text("\$${expense.price.toStringAsFixed(2)}"),

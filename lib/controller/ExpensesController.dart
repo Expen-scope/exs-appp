@@ -1,18 +1,15 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../model/Expenses.dart';
-import '../view/AddExpense.dart'; // تأكد من المسار الصحيح
+import 'package:flutter/material.dart';
 
 class ExpencesController extends GetxController {
-  // --- State Variables ---
   var listExpenses = <Expense>[].obs;
   var expenseCategories = <String>[].obs;
   var isDataLoading = false.obs;
 
-  // --- Configuration ---
   final String baseUrl = "http://10.0.2.2:8000/api";
   final _storage = const FlutterSecureStorage();
   String? authToken;
@@ -29,36 +26,73 @@ class ExpencesController extends GetxController {
     'Entertainment',
     'Personal Care'
   ];
+  final Map<String, ExpenseCategoryInfo> expenseCategoriesData = {
+    'Housing': ExpenseCategoryInfo(
+      color: Colors.redAccent,
+      icon: Icon(Icons.house),
+    ),
+    'Utilities': ExpenseCategoryInfo(
+      color: Colors.blueAccent,
+      icon: Icon(Icons.lightbulb),
+    ),
+    'Transportation': ExpenseCategoryInfo(
+      color: Colors.green,
+      icon: Icon(Icons.directions_car),
+    ),
+    'Groceries': ExpenseCategoryInfo(
+      color: Colors.orange,
+      icon: Icon(Icons.shopping_cart),
+    ),
+    'Dining Out': ExpenseCategoryInfo(
+      color: Colors.purple,
+      icon: Icon(Icons.restaurant),
+    ),
+    'Healthcare': ExpenseCategoryInfo(
+      color: Colors.teal,
+      icon: Icon(Icons.health_and_safety),
+    ),
+    'Insurance': ExpenseCategoryInfo(
+      color: Colors.indigo,
+      icon: Icon(Icons.shield),
+    ),
+    'Debt Payments': ExpenseCategoryInfo(
+      color: Colors.brown,
+      icon: Icon(Icons.money_off),
+    ),
+    'Entertainment': ExpenseCategoryInfo(
+      color: Colors.pink,
+      icon: Icon(Icons.movie),
+    ),
+    'Personal Care': ExpenseCategoryInfo(
+      color: Colors.cyan,
+      icon: Icon(Icons.spa),
+    ),
+  };
 
-  // --- Lifecycle ---
   @override
   void onInit() {
     super.onInit();
-    // قم بتهيئة القائمة الافتراضية فوراً
     expenseCategories.assignAll(_defaultExpenseCategories);
     _loadTokenAndFetchData();
   }
 
-  // --- Data Loading ---
   Future<void> reloadDataAfterLogin() async {
-    print("[ExpensesCtrl] 🔄 Reloading data after successful login...");
+    print("[ExpensesCtrl] Reloading data after successful login...");
     await _loadTokenAndFetchData();
   }
 
   Future<void> _loadTokenAndFetchData() async {
     authToken = await _storage.read(key: 'access_token');
     if (authToken == null) {
-      print("[ExpensesCtrl] ❌ Auth token not found.");
+      print("[ExpensesCtrl] Auth token not found.");
       return;
     }
-    print("[ExpensesCtrl] ✅ Auth token loaded.");
+    print("[ExpensesCtrl]  Auth token loaded.");
     await Future.wait([
       fetchExpenses(),
       fetchCategories(),
     ]);
   }
-
-  // --- API Calls ---
 
   Future<void> fetchCategories() async {
     if (authToken == null) return;
@@ -101,7 +135,6 @@ class ExpencesController extends GetxController {
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        // تأكد من أن الـ response يحتوي على مفتاح 'data' وهو عبارة عن List
         if (responseData is List) {
           final expenseData = responseData
               .where((e) => e['type_transaction'] == 'expense')
@@ -146,7 +179,12 @@ class ExpencesController extends GetxController {
       if (response.statusCode == 201 || response.statusCode == 200) {
         Get.snackbar('Success', 'Expense added successfully!');
         await fetchExpenses();
-        Get.back();       } else {
+        Get.snackbar('Success', 'Expense added successfully!');
+
+        Future.delayed(Duration(milliseconds: 800), () {
+          Get.offNamed('/ExpencesScreens');
+        });
+      } else {
         print(
             'Failed to add expense. Status: ${response.statusCode}, Body: ${response.body}');
         Get.snackbar(
@@ -180,4 +218,11 @@ class ExpencesController extends GetxController {
       Get.snackbar('Error', 'An error occurred: $e');
     }
   }
+}
+
+class ExpenseCategoryInfo {
+  final Color color;
+  final Icon icon;
+
+  ExpenseCategoryInfo({required this.color, required this.icon});
 }
