@@ -84,14 +84,16 @@ void main() async {
   await userController.loadUserData();
   await userController.initializeUser();
 
-  Get.put(ExpencesController());
-  Get.put(IncomesController());
-  Get.put(GoalController());
-  Get.put(ReminderController());
+  Get.put(UserController(), permanent: true);
+  Get.put(IncomesController(), permanent: true);
+  Get.put(ExpencesController(), permanent: true);
+
+  Get.put(FinancialController(), permanent: true);
+
   Get.lazyPut(() => LoginController());
   Get.lazyPut(() => RegisterController());
-
-  Get.put(FinancialController());
+  Get.lazyPut(() => GoalController());
+  Get.lazyPut(() => ReminderController());
 
   runApp(MyApp());
 }

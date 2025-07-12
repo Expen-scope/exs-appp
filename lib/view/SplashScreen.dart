@@ -19,7 +19,6 @@ class _MyCustomSplashScreenState extends State<MyCustomSplashScreen>
 
   @override
   void initState() {
-
     super.initState();
 
     _controller = AnimationController(
@@ -44,7 +43,6 @@ class _MyCustomSplashScreenState extends State<MyCustomSplashScreen>
 
     await Future.delayed(const Duration(seconds: 3));
 
-
     if (userController.isLoggedIn.value) {
       Get.offAllNamed('/HomePage');
     } else {
@@ -54,7 +52,6 @@ class _MyCustomSplashScreenState extends State<MyCustomSplashScreen>
 
   @override
   void dispose() {
-
     _controller.dispose();
     super.dispose();
   }

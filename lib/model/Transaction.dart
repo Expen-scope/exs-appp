@@ -5,7 +5,6 @@ class Transaction {
   final String type;
   final DateTime date;
   final String category;
-
   Transaction({
     required this.id,
     required this.description,
