@@ -26,47 +26,29 @@ class IncomesController extends GetxController {
     'Refunds/Reimbursements',
     'Bonuses'
   ];
-  final Map<String, IncomeCategoryInfo> incomeCategoriesData = {
-    'Salary': IncomeCategoryInfo(
+  final Map<String, CategoryInfo> incomeCategoriesData = {
+    'Salary': CategoryInfo(
       color: Colors.green,
       icon: Icon(Icons.attach_money),
     ),
-    'Business Income': IncomeCategoryInfo(
+    'Business Income': CategoryInfo(
       color: Colors.blue,
       icon: Icon(Icons.business_center),
     ),
-    'Freelance/Side Hustles': IncomeCategoryInfo(
-      color: Colors.orange,
-      icon: Icon(Icons.work_outline),
-    ),
-    'Investments': IncomeCategoryInfo(
-      color: Colors.purple,
-      icon: Icon(Icons.show_chart),
-    ),
-    'Rental Income': IncomeCategoryInfo(
-      color: Colors.teal,
-      icon: Icon(Icons.home_work),
-    ),
-    'Dividends': IncomeCategoryInfo(
-      color: Colors.indigo,
-      icon: Icon(Icons.pie_chart),
-    ),
-    'Interest Income': IncomeCategoryInfo(
-      color: Colors.brown,
-      icon: Icon(Icons.account_balance),
-    ),
-    'Gifts': IncomeCategoryInfo(
-      color: Colors.pink,
-      icon: Icon(Icons.card_giftcard),
-    ),
-    'Refunds/Reimbursements': IncomeCategoryInfo(
-      color: Colors.cyan,
-      icon: Icon(Icons.reply),
-    ),
-    'Bonuses': IncomeCategoryInfo(
-      color: Colors.red,
-      icon: Icon(Icons.star),
-    ),
+    'Freelance/Side Hustles':
+        CategoryInfo(color: Colors.orange, icon: Icon(Icons.work_outline)),
+    'Investments':
+        CategoryInfo(color: Colors.purple, icon: Icon(Icons.show_chart)),
+    'Rental Income':
+        CategoryInfo(color: Colors.teal, icon: Icon(Icons.home_work)),
+    'Dividends':
+        CategoryInfo(color: Colors.indigo, icon: Icon(Icons.pie_chart)),
+    'Interest Income':
+        CategoryInfo(color: Colors.brown, icon: Icon(Icons.account_balance)),
+    'Gifts': CategoryInfo(color: Colors.pink, icon: Icon(Icons.card_giftcard)),
+    'Refunds/Reimbursements':
+        CategoryInfo(color: Colors.cyan, icon: Icon(Icons.reply)),
+    'Bonuses': CategoryInfo(color: Colors.red, icon: Icon(Icons.star)),
   };
 
   @override
@@ -200,9 +182,9 @@ class IncomesController extends GetxController {
     }
   }
 }
-class IncomeCategoryInfo {
+
+class CategoryInfo {
   final Color color;
   final Icon icon;
-
-  IncomeCategoryInfo({required this.color, required this.icon});
+  CategoryInfo({required this.color, required this.icon});
 }

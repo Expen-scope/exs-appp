@@ -151,14 +151,18 @@ class _AddIncomesState extends State<AddIncomes> {
                   child: DropdownButtonFormField<String>(
                     value: currentSelection,
                     items: controller.incomeCategories.map((category) {
-                      final categoryInfo = controller.incomeCategoriesData[category]
-                          ?? IncomeCategoryInfo(color: Colors.grey, icon: Icon(Icons.category));
+                      final categoryInfo =
+                          controller.incomeCategoriesData[category] ??
+                              CategoryInfo(
+                                  color: Colors.grey,
+                                  icon: Icon(Icons.category));
 
                       return DropdownMenuItem<String>(
                         value: category,
                         child: Row(
                           children: [
-                            Icon(categoryInfo.icon.icon, color: categoryInfo.color),
+                            Icon(categoryInfo.icon.icon,
+                                color: categoryInfo.color),
                             const SizedBox(width: 8),
                             Text(category),
                           ],

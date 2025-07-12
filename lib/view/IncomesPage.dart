@@ -17,7 +17,7 @@ class IncomesScreens extends StatelessWidget {
       body: RefreshIndicator(
         onRefresh: () => controller.fetchIncomes(),
         child: Obx(
-              () => Column(
+          () => Column(
             children: [
               Expanded(
                 flex: 2,
@@ -27,33 +27,36 @@ class IncomesScreens extends StatelessWidget {
                     PieChartData(
                       sections: controller.incomes.isEmpty
                           ? [
-                        PieChartSectionData(
-                          value: 100,
-                          color: Colors.grey,
-                          title: "No Data",
-                          radius: 50,
-                          titleStyle: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ]
+                              PieChartSectionData(
+                                value: 100,
+                                color: Colors.grey,
+                                title: "No Data",
+                                radius: 50,
+                                titleStyle: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ]
                           : controller.incomes.map((income) {
-                        final categoryInfo = controller.incomeCategoriesData[income.category]
-                            ?? IncomeCategoryInfo(color: Colors.grey, icon: Icon(Icons.category));
-                        return PieChartSectionData(
-                          value: income.price,
-                          color: categoryInfo.color,
-                          title: "\$${income.price.toStringAsFixed(0)}",
-                          radius: 50,
-                          titleStyle: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        );
-                      }).toList(),
+                              final categoryInfo = controller
+                                      .incomeCategoriesData[income.category] ??
+                                  CategoryInfo(
+                                      color: Colors.grey,
+                                      icon: Icon(Icons.category));
+                              return PieChartSectionData(
+                                value: income.price,
+                                color: categoryInfo.color,
+                                title: "\$${income.price.toStringAsFixed(0)}",
+                                radius: 50,
+                                titleStyle: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              );
+                            }).toList(),
                       centerSpaceRadius: 40,
                       borderData: FlBorderData(show: false),
                       sectionsSpace: 4,
@@ -67,8 +70,10 @@ class IncomesScreens extends StatelessWidget {
                   itemCount: controller.incomes.length,
                   itemBuilder: (context, index) {
                     final income = controller.incomes[index];
-                    final categoryInfo = controller.incomeCategoriesData[income.category]
-                        ?? IncomeCategoryInfo(color: Colors.grey, icon: Icon(Icons.category));
+                    final categoryInfo =
+                        controller.incomeCategoriesData[income.category] ??
+                            CategoryInfo(
+                                color: Colors.grey, icon: Icon(Icons.category));
                     return Card(
                       elevation: 5,
                       color: Colors.grey[200],
@@ -78,8 +83,6 @@ class IncomesScreens extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ListTile(
-
-
                         contentPadding: const EdgeInsets.all(15),
                         leading: CircleAvatar(
                           backgroundColor: categoryInfo.color.withOpacity(0.2),
@@ -94,8 +97,7 @@ class IncomesScreens extends StatelessWidget {
                         trailing: IconButton(
                           icon: const Icon(Icons.delete,
                               color: Color(0xFF264653)),
-                          onPressed: () =>
-                              controller.deleteIncome(income.id!),
+                          onPressed: () => controller.deleteIncome(income.id!),
                         ),
                       ),
                     );
