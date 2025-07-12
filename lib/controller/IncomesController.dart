@@ -1,149 +1,208 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../model/Incomes.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../model/Incomes.dart';
 
 class IncomesController extends GetxController {
   var incomes = <Income>[].obs;
-  var selectedCategory = 'Salary'.obs;
-  final String baseUrl = "http://0.0.0.0:8000/api/";
-  late String? authToken;
+  var incomeCategories = <String>[].obs;
+  var isDataLoading = false.obs;
 
-  final Map<String, IncomeInfo> incomeCategoriesData = {
-    "Salary": IncomeInfo(
-        color: Color(0xff167dfe),
-        icon: Icon(
-          Icons.work,
-          color: Color(0xff167dfe),
-        )),
-    "Bonus": IncomeInfo(
-        color: Color(0xffd615ff),
-        icon: Icon(
-          Icons.card_giftcard,
-          color: Color(0xffd615ff),
-        )),
-    "Investment": IncomeInfo(
-        color: Color(0xfffa5f48),
-        icon: Icon(
-          Icons.trending_up,
-          color: Color(0xfffa5f48),
-        )),
-    "Freelance": IncomeInfo(
-        color: Color(0xff6ed4a5),
-        icon: Icon(
-          Icons.computer,
-          color: Color(0xff6ed4a5),
-        )),
-    "Other": IncomeInfo(
-        color: Color(0xfff8b107),
-        icon: Icon(
-          Icons.category,
-          color: Color(0xfff8b107),
-        )),
+  final String baseUrl = "http://10.0.2.2:8000/api";
+  final _storage = const FlutterSecureStorage();
+  String? authToken;
+
+  final List<String> _defaultIncomeCategories = [
+    'Salary',
+    'Business Income',
+    'Freelance/Side Hustles',
+    'Investments',
+    'Rental Income',
+    'Dividends',
+    'Interest Income',
+    'Gifts',
+    'Refunds/Reimbursements',
+    'Bonuses'
+  ];
+  final Map<String, IncomeCategoryInfo> incomeCategoriesData = {
+    'Salary': IncomeCategoryInfo(
+      color: Colors.green,
+      icon: Icon(Icons.attach_money),
+    ),
+    'Business Income': IncomeCategoryInfo(
+      color: Colors.blue,
+      icon: Icon(Icons.business_center),
+    ),
+    'Freelance/Side Hustles': IncomeCategoryInfo(
+      color: Colors.orange,
+      icon: Icon(Icons.work_outline),
+    ),
+    'Investments': IncomeCategoryInfo(
+      color: Colors.purple,
+      icon: Icon(Icons.show_chart),
+    ),
+    'Rental Income': IncomeCategoryInfo(
+      color: Colors.teal,
+      icon: Icon(Icons.home_work),
+    ),
+    'Dividends': IncomeCategoryInfo(
+      color: Colors.indigo,
+      icon: Icon(Icons.pie_chart),
+    ),
+    'Interest Income': IncomeCategoryInfo(
+      color: Colors.brown,
+      icon: Icon(Icons.account_balance),
+    ),
+    'Gifts': IncomeCategoryInfo(
+      color: Colors.pink,
+      icon: Icon(Icons.card_giftcard),
+    ),
+    'Refunds/Reimbursements': IncomeCategoryInfo(
+      color: Colors.cyan,
+      icon: Icon(Icons.reply),
+    ),
+    'Bonuses': IncomeCategoryInfo(
+      color: Colors.red,
+      icon: Icon(Icons.star),
+    ),
   };
-
-  List<String> get incomeCategories => incomeCategoriesData.keys.toList();
 
   @override
   void onInit() {
     super.onInit();
-    _loadToken();
+    incomeCategories.assignAll(_defaultIncomeCategories);
+    _loadTokenAndFetchData();
   }
 
-  Future<void> _loadToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    authToken = prefs.getString('auth_token');
-    await fetchIncomes();
+  Future<void> reloadDataAfterLogin() async {
+    print("[IncomesCtrl] Reloading data after successful login...");
+    await _loadTokenAndFetchData();
   }
 
-  Map<String, String> get _headers {
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $authToken',
-    };
+  Future<void> _loadTokenAndFetchData() async {
+    authToken = await _storage.read(key: 'access_token');
+    if (authToken == null) {
+      print("[IncomesCtrl]  Auth token not found.");
+      return;
+    }
+    print("[IncomesCtrl]  Auth token loaded.");
+    await Future.wait([fetchIncomes(), fetchCategories()]);
+  }
+
+  Future<void> fetchCategories() async {
+    if (authToken == null) return;
+    try {
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $authToken'
+      };
+      final response =
+          await http.get(Uri.parse('$baseUrl/categories'), headers: headers);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final customCategories = List<String>.from(data['income_categories']);
+        final combinedSet = {..._defaultIncomeCategories, ...customCategories};
+        incomeCategories.assignAll(combinedSet.toList());
+      } else {
+        print(
+            "Failed to load categories, using defaults. Status: ${response.statusCode}");
+        incomeCategories.assignAll(_defaultIncomeCategories);
+      }
+    } catch (e) {
+      print("Error fetching categories: $e");
+      incomeCategories.assignAll(_defaultIncomeCategories);
+    }
   }
 
   Future<void> fetchIncomes() async {
+    if (authToken == null) return;
+    isDataLoading.value = true;
     try {
-      final response = await http.get(
-        Uri.parse('${baseUrl}Income'),
-        headers: _headers,
-      );
-
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $authToken'
+      };
+      final response = await http.get(Uri.parse('$baseUrl/user/transactions'),
+          headers: headers);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        final List<dynamic> data = responseData['data'];
-
-        incomes.value = data.map((e) => Income.fromJson(e)).toList();
-        incomes.refresh();
-
-        print('Successfully loaded ${incomes.length} incomes');
+        final List dataList =
+            responseData is List ? responseData : responseData['data'];
+        final incomeData =
+            dataList.where((e) => e['type_transaction'] == 'income').toList();
+        incomes.value = incomeData.map((e) => Income.fromJson(e)).toList();
       } else {
-        Get.snackbar('Error', 'Failed to load incomes');
+        Get.snackbar(
+            'Error Fetching Incomes', 'Status: ${response.statusCode}');
       }
     } catch (e) {
-      print('Fetch error: $e');
-      Get.snackbar('Error', 'Failed to load incomes: $e');
+      Get.snackbar('Error', 'An error occurred during fetchIncomes: $e');
+    } finally {
+      isDataLoading.value = false;
     }
   }
 
   Future<void> addIncome(Income income) async {
+    if (authToken == null) {
+      Get.snackbar("Authentication Error", "Please log in again.");
+      return;
+    }
     try {
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $authToken'
+      };
       final response = await http.post(
-        Uri.parse('${baseUrl}addIncome'),
-        headers: _headers,
-        body: json.encode({
-          'nameinc': income.name,
-          'price': income.price,
-          'category': income.category,
-          'time': income.time,
-        }),
+        Uri.parse('$baseUrl/user/transactions'),
+        headers: headers,
+        body: json.encode(income.toJson()),
       );
-
-      final responseData = json.decode(response.body);
-
-      if (response.statusCode == 201) {
-        final newIncome = Income.fromJson(responseData['data']);
-        incomes.add(newIncome);
-        incomes.refresh();
-
-        Get.back();
+      if (response.statusCode == 201 || response.statusCode == 200) {
         await fetchIncomes();
 
-        Get.snackbar('Success', 'Income added successfully');
+        Get.snackbar('Success', 'Income added successfully!');
+
+        Future.delayed(Duration(milliseconds: 800), () {
+          Get.offNamed('/IncomesScreens');
+        });
       } else {
-        Get.snackbar(
-            'Error', responseData['message'] ?? 'Failed to add income');
+        Get.snackbar('Error Adding', 'Failed to add income. Please try again.');
       }
     } catch (e) {
-      Get.snackbar('Error', 'Connection failed: $e');
+      Get.snackbar('Error', 'An error occurred: $e');
     }
   }
 
   Future<void> deleteIncome(int id) async {
+    if (authToken == null) return;
     try {
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $authToken'
+      };
       final response = await http.delete(
-        Uri.parse('${baseUrl}deleteIncome/$id'),
-        headers: _headers,
-      );
-
+          Uri.parse('$baseUrl/user/transactions/$id'),
+          headers: headers);
       if (response.statusCode == 200) {
-        incomes.removeWhere((income) => income.id == id);
-        update();
+        Get.snackbar('Success', 'Income removed successfully!');
+        incomes.removeWhere((inc) => inc.id == id);
       } else {
-        Get.snackbar('Error', 'Failed to delete income');
+        Get.snackbar('Error Deleting', 'Failed to remove income.');
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to delete income');
+      Get.snackbar('Error', 'An error occurred: $e');
     }
   }
 }
-
-class IncomeInfo {
+class IncomeCategoryInfo {
   final Color color;
   final Icon icon;
 
-  IncomeInfo({required this.color, required this.icon});
+  IncomeCategoryInfo({required this.color, required this.icon});
 }
