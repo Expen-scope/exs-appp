@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../const/AppBarC.dart';
 import '../const/ContentLE.dart';
 import '../controller/ExpensesController.dart';
+import '../controller/IncomesController.dart';
 import 'AddExpense.dart';
 
 class ExpencesScreens extends StatelessWidget {
@@ -45,7 +46,7 @@ class ExpencesScreens extends StatelessWidget {
                               final categoryInfo =
                                   controller.expenseCategoriesData[
                                           expense.category] ??
-                                      ExpenseCategoryInfo(
+                                      CategoryInfo(
                                           color: Colors.grey,
                                           icon: Icon(Icons.category));
 
@@ -76,7 +77,7 @@ class ExpencesScreens extends StatelessWidget {
                     final expense = controller.listExpenses[index];
                     final categoryInfo =
                         controller.expenseCategoriesData[expense.category] ??
-                            ExpenseCategoryInfo(
+                            CategoryInfo(
                                 color: Colors.grey, icon: Icon(Icons.category));
 
                     return Card(

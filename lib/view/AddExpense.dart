@@ -1,3 +1,4 @@
+import 'package:abo_najib_2/controller/IncomesController.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -159,7 +160,7 @@ class _AddExpencesState extends State<AddExpences> {
                       items: controller.expenseCategories.map((category) {
                         final categoryInfo =
                             controller.expenseCategoriesData[category] ??
-                                ExpenseCategoryInfo(
+                                CategoryInfo(
                                     color: Colors.grey,
                                     icon: Icon(Icons.category));
                         return DropdownMenuItem<String>(

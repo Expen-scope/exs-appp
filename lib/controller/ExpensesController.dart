@@ -5,6 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../model/Expenses.dart';
 import 'package:flutter/material.dart';
 
+import 'IncomesController.dart';
+
 class ExpencesController extends GetxController {
   var listExpenses = <Expense>[].obs;
   var expenseCategories = <String>[].obs;
@@ -26,47 +28,29 @@ class ExpencesController extends GetxController {
     'Entertainment',
     'Personal Care'
   ];
-  final Map<String, ExpenseCategoryInfo> expenseCategoriesData = {
-    'Housing': ExpenseCategoryInfo(
+  final Map<String, CategoryInfo> expenseCategoriesData = {
+    'Housing': CategoryInfo(
       color: Colors.redAccent,
       icon: Icon(Icons.house),
     ),
-    'Utilities': ExpenseCategoryInfo(
+    'Utilities': CategoryInfo(
       color: Colors.blueAccent,
       icon: Icon(Icons.lightbulb),
     ),
-    'Transportation': ExpenseCategoryInfo(
-      color: Colors.green,
-      icon: Icon(Icons.directions_car),
-    ),
-    'Groceries': ExpenseCategoryInfo(
-      color: Colors.orange,
-      icon: Icon(Icons.shopping_cart),
-    ),
-    'Dining Out': ExpenseCategoryInfo(
-      color: Colors.purple,
-      icon: Icon(Icons.restaurant),
-    ),
-    'Healthcare': ExpenseCategoryInfo(
-      color: Colors.teal,
-      icon: Icon(Icons.health_and_safety),
-    ),
-    'Insurance': ExpenseCategoryInfo(
-      color: Colors.indigo,
-      icon: Icon(Icons.shield),
-    ),
-    'Debt Payments': ExpenseCategoryInfo(
-      color: Colors.brown,
-      icon: Icon(Icons.money_off),
-    ),
-    'Entertainment': ExpenseCategoryInfo(
-      color: Colors.pink,
-      icon: Icon(Icons.movie),
-    ),
-    'Personal Care': ExpenseCategoryInfo(
-      color: Colors.cyan,
-      icon: Icon(Icons.spa),
-    ),
+    // ... أكمل بقية الفئات بنفس الطريقة
+    'Transportation':
+        CategoryInfo(color: Colors.green, icon: Icon(Icons.directions_car)),
+    'Groceries':
+        CategoryInfo(color: Colors.orange, icon: Icon(Icons.shopping_cart)),
+    'Dining Out':
+        CategoryInfo(color: Colors.purple, icon: Icon(Icons.restaurant)),
+    'Healthcare':
+        CategoryInfo(color: Colors.teal, icon: Icon(Icons.health_and_safety)),
+    'Insurance': CategoryInfo(color: Colors.indigo, icon: Icon(Icons.shield)),
+    'Debt Payments':
+        CategoryInfo(color: Colors.brown, icon: Icon(Icons.money_off)),
+    'Entertainment': CategoryInfo(color: Colors.pink, icon: Icon(Icons.movie)),
+    'Personal Care': CategoryInfo(color: Colors.cyan, icon: Icon(Icons.spa)),
   };
 
   @override
@@ -218,11 +202,4 @@ class ExpencesController extends GetxController {
       Get.snackbar('Error', 'An error occurred: $e');
     }
   }
-}
-
-class ExpenseCategoryInfo {
-  final Color color;
-  final Icon icon;
-
-  ExpenseCategoryInfo({required this.color, required this.icon});
 }
