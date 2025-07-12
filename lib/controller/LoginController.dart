@@ -47,7 +47,7 @@ class LoginController extends GetxController {
         final user = UserModel.fromJson(response.data['user']);
         final accessToken = response.data['access_token'];
         final n8nToken = response.data['n8n_session_token'];
-print("$accessToken");
+        print("$accessToken");
         print("$n8nToken");
 
         await _saveAuthData(user, accessToken, n8nToken);
@@ -67,6 +67,7 @@ print("$accessToken");
       isLoading.value = false;
     }
   }
+
   Future<void> _saveAuthData(
       UserModel user, String accessToken, String n8nToken) async {
     await _storage.write(key: 'access_token', value: accessToken);
@@ -75,12 +76,13 @@ print("$accessToken");
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_data', user.toJsonString());
 
-    Get.find<UserController>()..user.value = user..isLoggedIn.value = true;
+    Get.find<UserController>()
+      ..user.value = user
+      ..isLoggedIn.value = true;
 
     if (Get.isRegistered<ExpencesController>()) {
       await Get.find<ExpencesController>().reloadDataAfterLogin();
     }
-
 
     print('Access Token saved successfully.');
   }
@@ -142,7 +144,6 @@ print("$accessToken");
     DialogHelper.showSuccessDialog(
       title: "Success",
       message: "You have been logged in successfully.",
-
       onOkPressed: () => Get.offAllNamed('/HomePage'),
     );
   }

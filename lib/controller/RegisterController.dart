@@ -43,11 +43,13 @@ class RegisterController extends GetxController {
     } else if (password.value.length < 8) {
       passwordError.value = "Password must be at least 8 characters long.";
     } else if (!RegExp(r'[A-Z]').hasMatch(password.value)) {
-      passwordError.value = "Password must contain at least one uppercase letter.";
+      passwordError.value =
+          "Password must contain at least one uppercase letter.";
     } else if (!RegExp(r'[0-9]').hasMatch(password.value)) {
       passwordError.value = "Password must contain at least one number.";
     } else if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password.value)) {
-      passwordError.value = "Password must contain at least one special character.";
+      passwordError.value =
+          "Password must contain at least one special character.";
     } else {
       passwordError.value = null;
     }
@@ -127,7 +129,7 @@ class RegisterController extends GetxController {
       title: "success",
       message: "The account has been created successfully",
       onOkPressed: () {
-       Get.toNamed("/Login");
+        Get.toNamed("/Login");
       },
     );
   }

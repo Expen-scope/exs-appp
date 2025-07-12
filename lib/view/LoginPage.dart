@@ -63,12 +63,13 @@ class LoginPage extends GetView<LoginController> {
 
   Widget _buildLogo(BuildContext context) {
     return Padding(
-      padding:  EdgeInsets.only(left: MediaQuery.of(context).size.height*0.05),
+      padding: EdgeInsets.only(left: MediaQuery.of(context).size.height * 0.05),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-
-          Image.asset('assets/Photo/1.png', height: MediaQuery.of(context).size.height*0.28,
+          Image.asset(
+            'assets/Photo/1.png',
+            height: MediaQuery.of(context).size.height * 0.28,
           ),
         ],
       ),

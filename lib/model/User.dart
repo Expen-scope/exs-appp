@@ -45,5 +45,6 @@ class UserModel {
 
   String toJsonString() => json.encode(toJson());
 
-  factory UserModel.fromJsonString(String source) => UserModel.fromJson(json.decode(source));
+  factory UserModel.fromJsonString(String source) =>
+      UserModel.fromJson(json.decode(source));
 }
