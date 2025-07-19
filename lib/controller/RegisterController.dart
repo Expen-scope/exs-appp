@@ -129,7 +129,7 @@ class RegisterController extends GetxController {
       title: "success",
       message: "The account has been created successfully",
       onOkPressed: () {
-        Get.toNamed("/Login");
+        Get.toNamed("/OtpVerificationPage");
       },
     );
   }

@@ -40,16 +40,11 @@ class FinancialController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // <-- التعديل 1: تبسيط onInit
-    // 1. قم بتحديد الفترة الزمنية الافتراضية أولاً (بدون تشغيل معالجة البيانات)
     _setDefaultPeriod();
-    // 2. ابدأ عملية التحميل والمعالجة الأولية
     loadData();
-    // 3. قم بإعداد المستمعين للتحديثات المستقبلية
     _setupDataListeners();
   }
 
-  // دالة مساعدة جديدة لتحديد الفترة الزمنية فقط
   void _setDefaultPeriod() {
     final now = DateTime.now();
     final start = DateTime(now.year, now.month, 1);
@@ -80,14 +75,12 @@ class FinancialController extends GetxController {
     isLoading.value = true;
     errorMessage.value = '';
     try {
-      // <-- التعديل 2: إضافة تأخير بسيط
-      // هذا يعطي الواجهة فرصة لإظهار دائرة التحميل قبل بدء المعالجة الثقيلة
       await Future.delayed(Duration.zero);
       _processData();
     } catch (e) {
       errorMessage.value = 'Failed to process data: $e';
       print(
-          'ERROR in FinancialController -> loadData: $e'); // للطباعة في الـ console
+          'ERROR in FinancialController -> loadData: $e');
       Get.snackbar('Error', errorMessage.value);
     } finally {
       isLoading.value = false;
@@ -95,7 +88,6 @@ class FinancialController extends GetxController {
   }
 
   void _processData() {
-    // <-- التعديل 3: إضافة جمل طباعة للمساعدة في التشخيص
     print("--- Starting _processData ---");
     print("Incomes count: ${incomesController.incomes.length}");
     print("Expenses count: ${expensesController.listExpenses.length}");

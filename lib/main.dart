@@ -1,6 +1,7 @@
 import 'package:abo_najib_2/controller/ExpensesController.dart';
 import 'package:abo_najib_2/controller/GoalController.dart';
 import 'package:abo_najib_2/controller/ReminderController.dart';
+import 'package:abo_najib_2/view/%20otp_verification_page.dart';
 import 'package:abo_najib_2/view/AddExpense.dart';
 import 'package:abo_najib_2/view/AddGoalScreen.dart';
 import 'package:abo_najib_2/view/AddIncomes.dart';
@@ -164,6 +165,10 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: ("/WelcomeScreen"),
           page: () => WelcomeScreen(),
+        ),
+        GetPage(
+          name: ("/OtpVerificationPage"),
+          page: () => OtpVerificationPage(email: '',),
         ),
       ],
       initialRoute: '/MyCustomSplashScreen',
