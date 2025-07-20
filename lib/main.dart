@@ -168,7 +168,9 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: ("/OtpVerificationPage"),
-          page: () => OtpVerificationPage(email: '',),
+          page: () => OtpVerificationPage(
+            email: '',
+          ),
         ),
       ],
       initialRoute: '/MyCustomSplashScreen',

@@ -20,14 +20,12 @@ class OtpVerificationPage extends StatelessWidget {
     isLoading.value = true;
 
     try {
-
       var response = await HttpHel.verifyOtp(email, otpCode.value);
       if (response['success']) {
         Get.offAllNamed("/Login");
       } else {
         Get.snackbar("Error", response['message']);
       }
-
 
       await Future.delayed(Duration(seconds: 2)); // simulate API call
       Get.snackbar("Success", "OTP Verified. Account activated.");
@@ -42,12 +40,14 @@ class OtpVerificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Verify OTP"), backgroundColor: Color(0xFF006000)),
+      appBar:
+          AppBar(title: Text("Verify OTP"), backgroundColor: Color(0xFF006000)),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            Text("Enter the 6-digit OTP sent to $email", style: TextStyle(fontSize: 16)),
+            Text("Enter the 6-digit OTP sent to $email",
+                style: TextStyle(fontSize: 16)),
             SizedBox(height: 20),
             PinCodeTextField(
               appContext: context,
@@ -69,23 +69,25 @@ class OtpVerificationPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             Obx(() => ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF006000),
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-              ),
-              onPressed: isLoading.value ? null : verifyOtp,
-              child: isLoading.value
-                  ? CircularProgressIndicator(color: Colors.white)
-                  : Text("Verify", style: TextStyle(fontSize: 18, color: Colors.white)),
-            )),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF006000),
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24)),
+                  ),
+                  onPressed: isLoading.value ? null : verifyOtp,
+                  child: isLoading.value
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text("Verify",
+                          style: TextStyle(fontSize: 18, color: Colors.white)),
+                )),
           ],
         ),
       ),
     );
   }
-
 }
+
 class HttpHel {
   static final Dio dio = Dio(BaseOptions(baseUrl: 'http://0.0.0.0:8000/api'));
 

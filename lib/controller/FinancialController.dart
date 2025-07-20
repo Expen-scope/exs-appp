@@ -41,8 +41,22 @@ class FinancialController extends GetxController {
   void onInit() {
     super.onInit();
     _setDefaultPeriod();
-    loadData();
+    fetchAllData();
     _setupDataListeners();
+  }
+
+  Future<void> fetchAllData() async {
+    isLoading.value = true;
+    try {
+      await incomesController.fetchIncomes();
+      await expensesController.fetchExpenses();
+      loadData();
+    } catch (e) {
+      errorMessage.value = 'Failed to fetch data: $e';
+      Get.snackbar('Error', errorMessage.value);
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void _setDefaultPeriod() {
@@ -79,8 +93,7 @@ class FinancialController extends GetxController {
       _processData();
     } catch (e) {
       errorMessage.value = 'Failed to process data: $e';
-      print(
-          'ERROR in FinancialController -> loadData: $e');
+      print('ERROR in FinancialController -> loadData: $e');
       Get.snackbar('Error', errorMessage.value);
     } finally {
       isLoading.value = false;
