@@ -126,16 +126,8 @@ class FinancialController extends GetxController {
     _processMonthlyTrends();
     _calculatePercentageChanges();
 
-    // لا حاجة لاستدعاء update() لأنك تستخدم متغيرات .obs
-    // update();
-
     print("--- Finished _processData (full run) ---");
   }
-
-  //
-  // لا توجد تعديلات أخرى مطلوبة في باقي الدوال
-  // الكود من هنا للأسفل يبقى كما هو
-  //
 
   void _calculateTotals() {
     final filteredIncomes = _filterByDateRange(incomesController.incomes);
@@ -180,39 +172,57 @@ class FinancialController extends GetxController {
     final filteredIncomes = _filterByDateRange(incomesController.incomes);
     final filteredExpenses =
         _filterByDateRange(expensesController.listExpenses);
+    final incomeCategoryMap = <String, double>{};
+    final expenseCategoryMap = <String, double>{};
 
     for (final income in filteredIncomes) {
-      categoryMap.update(income.category, (value) => value + income.price,
+      incomeCategoryMap.update(income.category, (value) => value + income.price,
           ifAbsent: () => income.price);
     }
     for (final expense in filteredExpenses) {
-      categoryMap.update(expense.category, (value) => value - expense.price,
-          ifAbsent: () => -expense.price);
+      expenseCategoryMap.update(
+          expense.category, (value) => value + expense.price,
+          ifAbsent: () => expense.price);
     }
 
+    final combinedCategories = <Map<String, dynamic>>[];
     final totalAbsoluteValue =
-        categoryMap.values.fold<double>(0, (sum, value) => sum + value.abs());
+        incomeCategoryMap.values.fold(0.0, (sum, val) => sum + val) +
+            expenseCategoryMap.values.fold(0.0, (sum, val) => sum + val);
 
-    categoryAnalysis.assignAll(categoryMap.entries.map((e) {
-      final isIncome = e.value >= 0;
-      final categoryInfo = isIncome
-          ? incomesController.incomeCategoriesData[e.key] ??
-              CategoryInfo(color: Colors.grey, icon: Icon(Icons.help))
-          : expensesController.expenseCategoriesData[e.key] ??
-              CategoryInfo(color: Colors.grey, icon: Icon(Icons.help));
-
+    incomeCategoryMap.forEach((category, amount) {
+      final categoryInfo = incomesController.incomeCategoriesData[category] ??
+          CategoryInfo(color: Colors.grey, icon: Icon(Icons.help));
       final percentage = totalAbsoluteValue == 0
           ? '0.0'
-          : ((e.value.abs() / totalAbsoluteValue) * 100).toStringAsFixed(1);
-
-      return {
-        'category': e.key,
-        'amount': e.value.abs(),
+          : ((amount / totalAbsoluteValue) * 100).toStringAsFixed(1);
+      combinedCategories.add({
+        'category': category,
+        'amount': amount,
         'color': categoryInfo.color,
         'icon': categoryInfo.icon,
         'percentage': percentage,
-      };
-    }).toList());
+        'type': 'income',
+      });
+    });
+
+    expenseCategoryMap.forEach((category, amount) {
+      final categoryInfo = expensesController.expenseCategoriesData[category] ??
+          CategoryInfo(color: Colors.grey, icon: Icon(Icons.help));
+      final percentage = totalAbsoluteValue == 0
+          ? '0.0'
+          : ((amount / totalAbsoluteValue) * 100).toStringAsFixed(1);
+      combinedCategories.add({
+        'category': category,
+        'amount': amount,
+        'color': categoryInfo.color,
+        'icon': categoryInfo.icon,
+        'percentage': percentage,
+        'type': 'expense',
+      });
+    });
+
+    categoryAnalysis.assignAll(combinedCategories);
   }
 
   void _calculatePercentageChanges() {

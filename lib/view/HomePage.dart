@@ -1,5 +1,3 @@
-import 'dart:math';
-import 'package:abo_najib_2/controller/OverViewHomepageController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +24,34 @@ class HomePage extends StatelessWidget {
               _scaffoldKey.currentState?.openDrawer();
             },
           ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Obx(() => DropdownButton<String>(
+                    value: controller.selectedPeriod.value,
+                    underline: const SizedBox.shrink(),
+                    icon: const Icon(Icons.calendar_today,
+                        color: Color(0xFF006000)),
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        controller.setPeriod(newValue);
+                      }
+                    },
+                    items: <String>['week', 'month', 'year']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value.capitalizeFirst!,
+                          style: const TextStyle(
+                              color: Color(0xFF006000),
+                              fontWeight: FontWeight.w500),
+                        ),
+                      );
+                    }).toList(),
+                  )),
+            ),
+          ],
         ),
         body: Obx(
           () {
@@ -87,10 +113,18 @@ class HomePage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: Colors.black),
               )),
-          const Text(
-            "This Month -12%",
-            style: TextStyle(fontSize: 14, color: Colors.red),
-          ),
+          Obx(() {
+            final change = controller.expensePercentageChange.value;
+            final color = change >= 0 ? Colors.red : Colors.green;
+            final sign = change >= 0 ? '+' : '';
+            if (change == 0.0) return const SizedBox.shrink();
+
+            return Text(
+              "vs Last Month ${sign}${change.toStringAsFixed(1)}%",
+              style: TextStyle(
+                  fontSize: 14, color: color, fontWeight: FontWeight.w500),
+            );
+          }),
           const SizedBox(height: 20),
           SizedBox(
             height: 150,
@@ -114,6 +148,7 @@ class HomePage extends StatelessWidget {
                 name: transaction['name'],
                 category: transaction['category'],
                 amount: -transaction['amount'],
+                date: transaction['rawDate'],
               );
             },
           ),
@@ -144,10 +179,18 @@ class HomePage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: Colors.black),
               )),
-          const Text(
-            "This Month +8%",
-            style: TextStyle(fontSize: 14, color: Colors.green),
-          ),
+          Obx(() {
+            final change = controller.incomePercentageChange.value;
+            final color = change >= 0 ? Colors.green : Colors.red;
+            final sign = change >= 0 ? '+' : '';
+            if (change == 0.0) return const SizedBox.shrink();
+
+            return Text(
+              "vs Last Month ${sign}${change.toStringAsFixed(1)}%",
+              style: TextStyle(
+                  fontSize: 14, color: color, fontWeight: FontWeight.w500),
+            );
+          }),
           const SizedBox(height: 20),
           SizedBox(
             height: 150,
@@ -171,6 +214,7 @@ class HomePage extends StatelessWidget {
                 name: transaction['name'],
                 category: transaction['category'],
                 amount: transaction['amount'],
+                date: transaction['rawDate'],
               );
             },
           ),
@@ -179,9 +223,10 @@ class HomePage extends StatelessWidget {
     );
   }
 
+// في HomePage.dart
   Widget _buildFinancialAnalysisView() {
     return Padding(
-      padding: const EdgeInsets.only(left: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12), // Padding أفقي
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -197,12 +242,12 @@ class HomePage extends StatelessWidget {
                     sectionsSpace: 2,
                     centerSpaceRadius: 40,
                     sections: controller.categoryAnalysis.map((data) {
-                      final isIncome = (data['color'] == Colors.green);
+                      final isIncome = data['type'] == 'income';
                       return PieChartSectionData(
                         color: data['color'],
                         value: data['amount'],
                         title: '${data['percentage']}%',
-                        radius: isIncome ? 60 : 50, // تمييز الدخل بحجم أكبر
+                        radius: isIncome ? 60 : 50,
                         titleStyle: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -215,27 +260,54 @@ class HomePage extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           const Text(
-            "Summary",
+            "Summary Table",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          // عرض ملخص الفئات
-          Obx(() => Column(
-                children: controller.categoryAnalysis.map((data) {
-                  return ListTile(
-                    leading: Icon(Icons.circle, color: data['color'], size: 16),
-                    title: Text(data['category']),
-                    trailing: Text(
-                      NumberFormat.currency(symbol: '\$', decimalDigits: 2)
-                          .format(data['amount']),
-                      style: TextStyle(
-                        color: data['color'],
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ))
+          SizedBox(
+            width: double.infinity,
+            child: Obx(() => DataTable(
+                  columnSpacing: 20,
+                  horizontalMargin: 0,
+                  headingRowHeight: 40,
+                  columns: const [
+                    DataColumn(
+                        label: Text('Category',
+                            style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataColumn(
+                        label: Text('Type',
+                            style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataColumn(
+                        label: Text('Amount',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        numeric: true),
+                  ],
+                  rows: controller.categoryAnalysis.map((data) {
+                    final isIncome = data['type'] == 'income';
+                    return DataRow(
+                      cells: [
+                        DataCell(Row(
+                          children: [
+                            Icon(Icons.circle, color: data['color'], size: 12),
+                            const SizedBox(width: 8),
+                            Text(data['category']),
+                          ],
+                        )),
+                        DataCell(Text(
+                          isIncome ? 'Income' : 'Expense',
+                          style: TextStyle(
+                              color: isIncome ? Colors.green : Colors.red),
+                        )),
+                        DataCell(Text(
+                          NumberFormat.currency(symbol: '\$', decimalDigits: 2)
+                              .format(data['amount']),
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        )),
+                      ],
+                    );
+                  }).toList(),
+                )),
+          ),
         ],
       ),
     );
@@ -291,6 +363,7 @@ class HomePage extends StatelessWidget {
     });
   }
 
+// في HomePage.dart
   Widget Card_Homepage(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
@@ -310,20 +383,26 @@ class HomePage extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.only(
             left: MediaQuery.of(context).size.width * 0.05,
+            right: MediaQuery.of(context).size.width * 0.05,
             bottom: MediaQuery.of(context).size.width * 0.05,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "1033 USD",
-                style: TextStyle(fontSize: 22, color: Colors.white),
+              const Text(
+                "Total Balance",
+                style: TextStyle(fontSize: 22, color: Colors.white70),
               ),
-              Text(
-                "Totale Balance",
-                style: TextStyle(fontSize: 22, color: Colors.white),
-              )
+              SizedBox(height: 8),
+              Obx(() => Text(
+                    NumberFormat.currency(symbol: '\$', decimalDigits: 2)
+                        .format(controller.balance.value),
+                    style: const TextStyle(
+                        fontSize: 32,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  )),
             ],
           ),
         ),
@@ -387,15 +466,26 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  // في HomePage.dart
   Widget _buildTransactionTile({
     required Icon icon,
     required String name,
     required String category,
     required double amount,
+    required String date, // <-- إضافة التاريخ هنا
   }) {
     final format = NumberFormat.currency(symbol: '', decimalDigits: 2);
     final String formattedAmount =
         (amount > 0 ? '+' : '-') + '\$${format.format(amount.abs())}';
+
+    // تنسيق التاريخ ليكون سهل القراءة
+    String formattedDate = '';
+    try {
+      final parsedDate = DateFormat('yyyy-MM-dd HH:mm:ss').parse(date);
+      formattedDate = DateFormat('MMM dd, yyyy').format(parsedDate);
+    } catch (e) {
+      formattedDate = 'Invalid Date';
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -427,14 +517,25 @@ class HomePage extends StatelessWidget {
               ],
             ),
           ),
-          Text(
-            formattedAmount,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: amount > 0 ? Colors.green : Colors.black,
-            ),
-          ),
+          Column(
+            // استخدام Column لعرض المبلغ والتاريخ فوق بعض
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                formattedAmount,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: amount > 0 ? Colors.green : Colors.black,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                formattedDate, // <-- عرض التاريخ المنسق
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+            ],
+          )
         ],
       ),
     );
