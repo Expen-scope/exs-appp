@@ -171,7 +171,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ],
-      initialRoute: '/MyCustomSplashScreen',
+      initialRoute: '/WelcomeScreen',
     );
   }
 }

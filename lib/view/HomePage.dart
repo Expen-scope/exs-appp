@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 import '../const/Drawer.dart';
 import '../controller/FinancialController.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,8 @@ class HomePage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FinancialController controller = Get.find<FinancialController>();
 
+  HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,8 +21,10 @@ class HomePage extends StatelessWidget {
         key: _scaffoldKey,
         backgroundColor: const Color(0xFFF8F9FA),
         appBar: AppBar(
+          backgroundColor: const Color(0xFFF8F9FA),
+          elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.menu, color: Color(0xFF006000)),
+            icon: const Icon(Icons.menu, color: Color(0xFF006000)),
             onPressed: () {
               _scaffoldKey.currentState?.openDrawer();
             },
@@ -33,9 +38,7 @@ class HomePage extends StatelessWidget {
                     icon: const Icon(Icons.calendar_today,
                         color: Color(0xFF006000)),
                     onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        controller.setPeriod(newValue);
-                      }
+                      if (newValue != null) controller.setPeriod(newValue);
                     },
                     items: <String>['week', 'month', 'year']
                         .map<DropdownMenuItem<String>>((String value) {
@@ -56,27 +59,26 @@ class HomePage extends StatelessWidget {
         body: Obx(
           () {
             return controller.isLoading.value
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : ListView(
-                    children: [
-                      Card_Homepage(context),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.width * 0.05,
-                      ),
-                      _buildTabs(context),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.width * 0.05,
-                      ),
-                      _buildActiveTabContent(),
-                    ],
+                ? const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF006000)))
+                : RefreshIndicator(
+                    onRefresh: controller.fetchAllData,
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        Card_Homepage(context),
+                        const SizedBox(height: 24),
+                        _buildTabs(context),
+                        const SizedBox(height: 24),
+                        _buildActiveTabContent(context),
+                      ],
+                    ),
                   );
           },
         ));
   }
 
-  Widget _buildActiveTabContent() {
+  Widget _buildActiveTabContent(BuildContext context) {
     return Obx(() {
       switch (controller.activeTab.value) {
         case ActiveTab.expenses:
@@ -84,7 +86,7 @@ class HomePage extends StatelessWidget {
         case ActiveTab.incomes:
           return _buildIncomesView();
         case ActiveTab.analysis:
-          return _buildFinancialAnalysisView();
+          return _buildFinancialAnalysisView(context);
         default:
           return const SizedBox.shrink();
       }
@@ -94,239 +96,260 @@ class HomePage extends StatelessWidget {
   Widget _buildExpensesView() {
     final expenseTransactions =
         controller.transactions.where((t) => t['type'] == 'expense').toList();
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Spending",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Obx(() => Text(
-                NumberFormat.currency(symbol: '\$', decimalDigits: 2)
-                    .format(controller.totalExpenses.value),
-                style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
-              )),
-          Obx(() {
-            final change = controller.expensePercentageChange.value;
-            final color = change >= 0 ? Colors.red : Colors.green;
-            final sign = change >= 0 ? '+' : '';
-            if (change == 0.0) return const SizedBox.shrink();
-
-            return Text(
-              "vs Last Month ${sign}${change.toStringAsFixed(1)}%",
-              style: TextStyle(
-                  fontSize: 14, color: color, fontWeight: FontWeight.w500),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Spending",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        Obx(() => Text(
+              NumberFormat.currency(symbol: '\$', decimalDigits: 2)
+                  .format(controller.totalExpenses.value),
+              style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+            )),
+        Obx(() {
+          final change = controller.expensePercentageChange.value;
+          final color = change >= 0 ? Colors.red : Colors.green;
+          final sign = change >= 0 ? '+' : '';
+          if (change == 0.0) return const SizedBox.shrink();
+          return Text(
+            "vs Last Month ${sign}${change.toStringAsFixed(1)}%",
+            style: TextStyle(
+                fontSize: 14, color: color, fontWeight: FontWeight.w500),
+          );
+        }),
+        const SizedBox(height: 20),
+        SizedBox(height: 150, child: _buildChart(isIncome: false)),
+        const SizedBox(height: 24),
+        const Text("Recent Transactions",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount:
+              expenseTransactions.length > 5 ? 5 : expenseTransactions.length,
+          itemBuilder: (context, index) {
+            final transaction = expenseTransactions[index];
+            return _buildTransactionTile(
+              icon: transaction['icon'],
+              name: transaction['name'],
+              category: transaction['category'],
+              amount: -transaction['amount'],
+              date: transaction['rawDate'],
             );
-          }),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 150,
-            child: _buildChart(isIncome: false),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            "Recent Transactions",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount:
-                expenseTransactions.length > 5 ? 5 : expenseTransactions.length,
-            itemBuilder: (context, index) {
-              final transaction = expenseTransactions[index];
-              return _buildTransactionTile(
-                icon: transaction['icon'],
-                name: transaction['name'],
-                category: transaction['category'],
-                amount: -transaction['amount'],
-                date: transaction['rawDate'],
-              );
-            },
-          ),
-        ],
-      ),
+          },
+        ),
+      ],
     );
   }
 
   Widget _buildIncomesView() {
     final incomeTransactions =
         controller.transactions.where((t) => t['type'] == 'income').toList();
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Income",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Obx(() => Text(
-                NumberFormat.currency(symbol: '\$', decimalDigits: 2)
-                    .format(controller.totalIncome.value),
-                style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
-              )),
-          Obx(() {
-            final change = controller.incomePercentageChange.value;
-            final color = change >= 0 ? Colors.green : Colors.red;
-            final sign = change >= 0 ? '+' : '';
-            if (change == 0.0) return const SizedBox.shrink();
-
-            return Text(
-              "vs Last Month ${sign}${change.toStringAsFixed(1)}%",
-              style: TextStyle(
-                  fontSize: 14, color: color, fontWeight: FontWeight.w500),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Income",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        Obx(() => Text(
+              NumberFormat.currency(symbol: '\$', decimalDigits: 2)
+                  .format(controller.totalIncome.value),
+              style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+            )),
+        Obx(() {
+          final change = controller.incomePercentageChange.value;
+          final color = change >= 0 ? Colors.green : Colors.red;
+          final sign = change >= 0 ? '+' : '';
+          if (change == 0.0) return const SizedBox.shrink();
+          return Text(
+            "vs Last Month ${sign}${change.toStringAsFixed(1)}%",
+            style: TextStyle(
+                fontSize: 14, color: color, fontWeight: FontWeight.w500),
+          );
+        }),
+        const SizedBox(height: 20),
+        SizedBox(height: 150, child: _buildChart(isIncome: true)),
+        const SizedBox(height: 24),
+        const Text("Recent Transactions",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount:
+              incomeTransactions.length > 5 ? 5 : incomeTransactions.length,
+          itemBuilder: (context, index) {
+            final transaction = incomeTransactions[index];
+            return _buildTransactionTile(
+              icon: transaction['icon'],
+              name: transaction['name'],
+              category: transaction['category'],
+              amount: transaction['amount'],
+              date: transaction['rawDate'],
             );
-          }),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 150,
-            child: _buildChart(isIncome: true),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            "Recent Transactions",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount:
-                incomeTransactions.length > 5 ? 5 : incomeTransactions.length,
-            itemBuilder: (context, index) {
-              final transaction = incomeTransactions[index];
-              return _buildTransactionTile(
-                icon: transaction['icon'],
-                name: transaction['name'],
-                category: transaction['category'],
-                amount: transaction['amount'],
-                date: transaction['rawDate'],
-              );
-            },
-          ),
-        ],
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFinancialAnalysisView(BuildContext context) {
+    final Map<String, Widget> analysisWidgets = {
+      'income_vs_expense': _buildAnalysisCard(
+        key: const ValueKey('income_vs_expense'),
+        title: "Income vs. Expense",
+        height: 320,
+        child: _buildBarChart(),
+      ),
+      'savings_rate': _buildAnalysisCard(
+        key: const ValueKey('savings_rate'),
+        title: "Savings Rate",
+        height: 320,
+        child: _buildSavingsGauge(),
+      ),
+      'category_breakdown': _buildAnalysisCard(
+        key: const ValueKey('category_breakdown'),
+        title: "Category Breakdown",
+        height: 320,
+        child: Obx(() => PieChart(
+              PieChartData(
+                sectionsSpace: 2,
+                centerSpaceRadius: 40,
+                sections: controller.categoryAnalysis.map((data) {
+                  final isIncome = data['type'] == 'income';
+                  return PieChartSectionData(
+                    color: data['color'],
+                    value: data['amount'],
+                    title: '${data['percentage']}%',
+                    radius: isIncome ? 60 : 50,
+                    titleStyle: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  );
+                }).toList(),
+              ),
+            )),
+      ),
+      'summary_table': _buildAnalysisCard(
+        key: const ValueKey('summary_table'),
+        title: "Summary Table",
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Obx(() => DataTable(
+                columnSpacing: 20,
+                horizontalMargin: 10,
+                headingRowHeight: 40,
+                columns: const [
+                  DataColumn(
+                      label: Text('Category',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(
+                      label: Text('Type',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(
+                      label: Text('Amount',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      numeric: true),
+                ],
+                rows: controller.categoryAnalysis.map((data) {
+                  final isIncome = data['type'] == 'income';
+                  return DataRow(
+                    cells: [
+                      DataCell(Row(
+                        children: [
+                          Icon(Icons.circle, color: data['color'], size: 12),
+                          const SizedBox(width: 8),
+                          Text(data['category']),
+                        ],
+                      )),
+                      DataCell(Text(isIncome ? 'Income' : 'Expense',
+                          style: TextStyle(
+                              color: isIncome ? Colors.green : Colors.red))),
+                      DataCell(Text(
+                          NumberFormat.currency(symbol: '\$', decimalDigits: 2)
+                              .format(data['amount']),
+                          style: const TextStyle(fontWeight: FontWeight.w500))),
+                    ],
+                  );
+                }).toList(),
+              )),
+        ),
+      ),
+    };
+
+    return Obx(
+      () => ReorderableListView(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        children: controller.analysisWidgetOrder
+            .map((widgetKey) => analysisWidgets[widgetKey]!)
+            .toList(),
+        onReorder: (oldIndex, newIndex) {
+          if (newIndex > oldIndex) newIndex -= 1;
+          final item = controller.analysisWidgetOrder.removeAt(oldIndex);
+          controller.analysisWidgetOrder.insert(newIndex, item);
+        },
       ),
     );
   }
 
-// في HomePage.dart
-  Widget _buildFinancialAnalysisView() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12), // Padding أفقي
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Category Breakdown",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 200,
-            child: Obx(() => PieChart(
-                  PieChartData(
-                    sectionsSpace: 2,
-                    centerSpaceRadius: 40,
-                    sections: controller.categoryAnalysis.map((data) {
-                      final isIncome = data['type'] == 'income';
-                      return PieChartSectionData(
-                        color: data['color'],
-                        value: data['amount'],
-                        title: '${data['percentage']}%',
-                        radius: isIncome ? 60 : 50,
-                        titleStyle: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      );
-                    }).toList(),
+  Widget _buildAnalysisCard({
+    required Key key,
+    required String title,
+    required Widget child,
+    double? height,
+  }) {
+    return Card(
+      color: Colors.white,
+      key: key,
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: SizedBox(
+        height: height,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                )),
+                  Icon(Icons.drag_handle, color: Colors.grey.shade400),
+                ],
+              ),
+              const SizedBox(height: 16),
+              height != null ? Expanded(child: child) : child,
+            ],
           ),
-          const SizedBox(height: 24),
-          const Text(
-            "Summary Table",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: Obx(() => DataTable(
-                  columnSpacing: 20,
-                  horizontalMargin: 0,
-                  headingRowHeight: 40,
-                  columns: const [
-                    DataColumn(
-                        label: Text('Category',
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                    DataColumn(
-                        label: Text('Type',
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                    DataColumn(
-                        label: Text('Amount',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        numeric: true),
-                  ],
-                  rows: controller.categoryAnalysis.map((data) {
-                    final isIncome = data['type'] == 'income';
-                    return DataRow(
-                      cells: [
-                        DataCell(Row(
-                          children: [
-                            Icon(Icons.circle, color: data['color'], size: 12),
-                            const SizedBox(width: 8),
-                            Text(data['category']),
-                          ],
-                        )),
-                        DataCell(Text(
-                          isIncome ? 'Income' : 'Expense',
-                          style: TextStyle(
-                              color: isIncome ? Colors.green : Colors.red),
-                        )),
-                        DataCell(Text(
-                          NumberFormat.currency(symbol: '\$', decimalDigits: 2)
-                              .format(data['amount']),
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        )),
-                      ],
-                    );
-                  }).toList(),
-                )),
-          ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildTabs(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.05,
-        ),
         _buildTabItem('Expenses', ActiveTab.expenses),
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.05,
-        ),
+        SizedBox(width: MediaQuery.of(context).size.height * .02),
         _buildTabItem('Incomes', ActiveTab.incomes),
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.05,
-        ),
+        SizedBox(width: MediaQuery.of(context).size.height * .02),
         _buildTabItem('Analysis', ActiveTab.analysis),
       ],
     );
@@ -363,49 +386,37 @@ class HomePage extends StatelessWidget {
     });
   }
 
-// في HomePage.dart
   Widget Card_Homepage(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-          left: MediaQuery.of(context).size.width * 0.05,
-          right: MediaQuery.of(context).size.width * 0.05,
-          top: MediaQuery.of(context).size.width * 0.05),
-      child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(18)),
-          gradient: LinearGradient(
-            colors: [Color(0xFF006000), Color(0xFF06402B)],
-            begin: Alignment.bottomLeft,
-            end: Alignment.topRight,
-          ),
+    final screenHeight = MediaQuery.of(context).size.height;
+    return Container(
+      height: screenHeight * 0.22,
+      padding: const EdgeInsets.all(24),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(18)),
+        gradient: LinearGradient(
+          colors: [Color(0xFF006000), Color(0xFF06402B)],
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight,
         ),
-        height: MediaQuery.of(context).size.height * 0.29,
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: MediaQuery.of(context).size.width * 0.05,
-            right: MediaQuery.of(context).size.width * 0.05,
-            bottom: MediaQuery.of(context).size.width * 0.05,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Total Balance",
+            style: TextStyle(fontSize: 18, color: Colors.white70),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Total Balance",
-                style: TextStyle(fontSize: 22, color: Colors.white70),
-              ),
-              SizedBox(height: 8),
-              Obx(() => Text(
-                    NumberFormat.currency(symbol: '\$', decimalDigits: 2)
-                        .format(controller.balance.value),
-                    style: const TextStyle(
-                        fontSize: 32,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  )),
-            ],
-          ),
-        ),
+          const SizedBox(height: 8),
+          Obx(() => Text(
+                NumberFormat.currency(symbol: '\$', decimalDigits: 2)
+                    .format(controller.balance.value),
+                style: const TextStyle(
+                    fontSize: 36,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              )),
+        ],
       ),
     );
   }
@@ -413,15 +424,13 @@ class HomePage extends StatelessWidget {
   Widget _buildChart({required bool isIncome}) {
     final List<Map<String, dynamic>> data = controller.monthlyTrends;
     if (data.isEmpty) {
-      return Center(child: Text("No data for chart."));
+      return const Center(child: Text("No data for chart."));
     }
-
     final spots = data.asMap().entries.map((entry) {
       int index = entry.key;
       double value = isIncome ? entry.value['income'] : entry.value['expense'];
       return FlSpot(index.toDouble(), value);
     }).toList();
-
     return LineChart(
       LineChartData(
         gridData: FlGridData(show: false),
@@ -441,9 +450,12 @@ class HomePage extends StatelessWidget {
                     return const Text('');
                   },
                   interval: 1)),
-          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
         borderData: FlBorderData(show: false),
         lineBarsData: [
@@ -466,27 +478,23 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // في HomePage.dart
   Widget _buildTransactionTile({
     required Icon icon,
     required String name,
     required String category,
     required double amount,
-    required String date, // <-- إضافة التاريخ هنا
+    required String date,
   }) {
     final format = NumberFormat.currency(symbol: '', decimalDigits: 2);
     final String formattedAmount =
         (amount > 0 ? '+' : '-') + '\$${format.format(amount.abs())}';
-
-    // تنسيق التاريخ ليكون سهل القراءة
     String formattedDate = '';
     try {
       final parsedDate = DateFormat('yyyy-MM-dd HH:mm:ss').parse(date);
       formattedDate = DateFormat('MMM dd, yyyy').format(parsedDate);
     } catch (e) {
-      formattedDate = 'Invalid Date';
+      formattedDate = date.split(' ').first;
     }
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -494,9 +502,8 @@ class HomePage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(12),
-            ),
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(12)),
             child: icon,
           ),
           const SizedBox(width: 12),
@@ -504,40 +511,170 @@ class HomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16),
-                ),
+                Text(name,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16)),
                 const SizedBox(height: 4),
-                Text(
-                  category,
-                  style: const TextStyle(color: Colors.grey, fontSize: 14),
-                ),
+                Text(category,
+                    style: const TextStyle(color: Colors.grey, fontSize: 14)),
               ],
             ),
           ),
           Column(
-            // استخدام Column لعرض المبلغ والتاريخ فوق بعض
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 formattedAmount,
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: amount > 0 ? Colors.green : Colors.black,
-                ),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: amount > 0 ? Colors.green : Colors.black),
               ),
               const SizedBox(height: 4),
-              Text(
-                formattedDate, // <-- عرض التاريخ المنسق
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
-              ),
+              Text(formattedDate,
+                  style: const TextStyle(color: Colors.grey, fontSize: 12)),
             ],
           )
         ],
       ),
+    );
+  }
+
+  Widget _buildBarChart() {
+    final data = controller.incomeExpenseComparisonData;
+    if (data.isEmpty) return const Center(child: Text("No data to compare."));
+    final double maxYValue = data
+        .map((d) => (d['income'] as double) > (d['expense'] as double)
+            ? (d['income'] as double)
+            : (d['expense'] as double))
+        .reduce((a, b) => a > b ? a : b);
+    return BarChart(
+      BarChartData(
+        alignment: BarChartAlignment.spaceAround,
+        maxY: maxYValue * 1.2,
+        gridData: FlGridData(show: false),
+        borderData: FlBorderData(show: false),
+        titlesData: FlTitlesData(
+          topTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              getTitlesWidget: (value, meta) {
+                final index = value.toInt();
+                if (index < data.length) {
+                  return SideTitleWidget(
+                    space: 4,
+                    meta: meta,
+                    child: Text(
+                      data[index]['month'].toString().split(' ').first,
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        ),
+        barGroups: data.asMap().entries.map((entry) {
+          final index = entry.key;
+          final item = entry.value;
+          return BarChartGroupData(
+            x: index,
+            barRods: [
+              BarChartRodData(
+                  toY: item['income'],
+                  color: Colors.green,
+                  width: 12,
+                  borderRadius: BorderRadius.circular(4)),
+              BarChartRodData(
+                  toY: item['expense'],
+                  color: Colors.red,
+                  width: 12,
+                  borderRadius: BorderRadius.circular(4)),
+            ],
+          );
+        }).toList(),
+        barTouchData: BarTouchData(
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              String label = rodIndex == 0 ? 'Income' : 'Expense';
+              return BarTooltipItem(
+                '$label\n',
+                const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: NumberFormat.currency(symbol: '\$').format(rod.toY),
+                    style: TextStyle(
+                        color: rod.color,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSavingsGauge() {
+    final double rate = controller.savingsRate.value;
+    Color indicatorColor;
+    if (rate < 0) {
+      indicatorColor = Colors.red;
+    } else if (rate < 10) {
+      indicatorColor = Colors.orange;
+    } else {
+      indicatorColor = Colors.green;
+    }
+    final double normalizedValue = (rate.clamp(-100, 100) + 100) / 200;
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        SizedBox(
+          width: 200,
+          height: 200,
+          child: CircularProgressIndicator(
+            value: 1,
+            strokeWidth: 20,
+            backgroundColor: Colors.grey.shade200,
+            color: indicatorColor.withOpacity(0.2),
+          ),
+        ),
+        SizedBox(
+          width: 200,
+          height: 200,
+          child: CircularProgressIndicator(
+            value: normalizedValue,
+            strokeWidth: 20,
+            valueColor: AlwaysStoppedAnimation<Color>(indicatorColor),
+            strokeCap: StrokeCap.round,
+          ),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '${rate.toStringAsFixed(1)}%',
+              style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: indicatorColor),
+            ),
+            const Text("of income saved",
+                style: TextStyle(fontSize: 14, color: Colors.grey)),
+          ],
+        ),
+      ],
     );
   }
 }

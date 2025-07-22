@@ -20,21 +20,22 @@ class FinancialController extends GetxController {
   final RxDouble totalIncome = 0.0.obs;
   final RxDouble totalExpenses = 0.0.obs;
   final RxDouble balance = 0.0.obs;
-
+  final RxDouble savingsRate = 0.0.obs;
   final RxDouble incomePercentageChange = 0.0.obs;
   final RxDouble expensePercentageChange = 0.0.obs;
-
   final RxList<Map<String, dynamic>> transactions =
       <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> categoryAnalysis =
       <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> monthlyTrends =
       <Map<String, dynamic>>[].obs;
-
   final RxString selectedPeriod = 'month'.obs;
   final Rx<DateTime?> startDate = Rx<DateTime?>(null);
   final Rx<DateTime?> endDate = Rx<DateTime?>(null);
-
+  final RxList<Map<String, dynamic>> incomeExpenseComparisonData =
+      <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> savingsTrendData =
+      <Map<String, dynamic>>[].obs;
   final DateFormat apiDateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
 
   @override
@@ -43,6 +44,16 @@ class FinancialController extends GetxController {
     _setDefaultPeriod();
     fetchAllData();
     _setupDataListeners();
+  }
+
+  var analysisWidgetOrder = <String>[
+    'income_vs_expense',
+    'savings_rate',
+    'category_breakdown',
+    'summary_table',
+  ].obs;
+  void _processIncomeExpenseComparison() {
+    incomeExpenseComparisonData.assignAll(monthlyTrends);
   }
 
   Future<void> fetchAllData() async {
@@ -67,8 +78,21 @@ class FinancialController extends GetxController {
     endDate.value = end;
   }
 
+  void _processSavingsTrend() {
+    double cumulativeBalance = 0.0;
+    final trendData = monthlyTrends.map((trend) {
+      cumulativeBalance += (trend['balance'] as double);
+      return {
+        'period': trend['month'],
+        'balance': trend['balance'],
+        'cumulativeBalance': cumulativeBalance,
+      };
+    }).toList();
+
+    savingsTrendData.assignAll(trendData);
+  }
+
   void _setupDataListeners() {
-    // هذه الدالة ستبقى كما هي، وهي ممتازة
     ever(incomesController.incomes, (_) {
       print(
           "FinancialController: Detected change in INCOMES. Reloading data...");
@@ -105,7 +129,6 @@ class FinancialController extends GetxController {
     print("Incomes count: ${incomesController.incomes.length}");
     print("Expenses count: ${expensesController.listExpenses.length}");
 
-    // هذا الشرط جيد، لكن سنقوم بتصفير القيم إذا كانت القوائم فارغة
     if (incomesController.incomes.isEmpty &&
         expensesController.listExpenses.isEmpty) {
       print("Both lists are empty. Clearing all values.");
@@ -115,6 +138,23 @@ class FinancialController extends GetxController {
       transactions.clear();
       categoryAnalysis.clear();
       monthlyTrends.clear();
+      _calculateTotals();
+      _calculateBalance();
+
+      if (totalIncome.value > 0) {
+        savingsRate.value = (balance.value / totalIncome.value) * 100;
+      } else {
+        savingsRate.value = 0.0;
+      }
+
+      _processTransactions();
+      _processCategoryAnalysis();
+      _processMonthlyTrends();
+      _calculatePercentageChanges();
+      _processIncomeExpenseComparison();
+      incomeExpenseComparisonData.clear();
+      savingsTrendData.clear();
+
       print("--- Finished _processData (early exit) ---");
       return;
     }
@@ -125,6 +165,9 @@ class FinancialController extends GetxController {
     _processCategoryAnalysis();
     _processMonthlyTrends();
     _calculatePercentageChanges();
+
+    _processIncomeExpenseComparison();
+    _processSavingsTrend();
 
     print("--- Finished _processData (full run) ---");
   }
