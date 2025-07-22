@@ -18,8 +18,17 @@ class ReminderModel {
       id: json['id'],
       name: json['name'],
       time: DateTime.parse(json['time']),
-      price: (json['price'] as num).toDouble(),
-      collectedoprice: (json['collectedoprice'] as num).toDouble(),
+      price: double.parse(json['price'].toString()),
+      collectedoprice: double.parse(json['collectedoprice'].toString()),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'price': price.toString(),
+      'collectedoprice': collectedoprice.toString(),
+      'time': time.toIso8601String(),
+    };
   }
 }

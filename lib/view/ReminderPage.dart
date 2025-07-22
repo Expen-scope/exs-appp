@@ -19,8 +19,17 @@ class Reminders extends StatelessWidget {
     return Scaffold(
       appBar: Appbarofpage(TextPage: "Reminders"),
       body: RefreshIndicator(
-        onRefresh: () async {},
+        onRefresh: () => reminderController.fetchReminders(),
         child: Obx(() {
+          if (reminderController.isLoading.value &&
+              reminderController.reminders.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (reminderController.errorMessage.value.isNotEmpty) {
+            return Center(
+                child: Text('Error: ${reminderController.errorMessage.value}'));
+          }
+
           if (reminderController.reminders.isEmpty) {
             return const Center(
               child: Text(

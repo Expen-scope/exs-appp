@@ -19,10 +19,10 @@ class InitialBinding implements Bindings {
     Get.put(ExpencesController(), permanent: true);
 
     Get.put(FinancialController(), permanent: true);
+    Get.lazyPut<ReminderController>(() => ReminderController());
 
     Get.lazyPut(() => LoginController());
     Get.lazyPut(() => RegisterController());
     Get.lazyPut(() => GoalController());
-    Get.lazyPut(() => ReminderController());
   }
 }

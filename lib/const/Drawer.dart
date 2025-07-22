@@ -15,16 +15,14 @@ Widget CustomDrawer(BuildContext context) {
       children: [
         Obx(() => UserAccountsDrawerHeader(
               accountName: Text(
-                // userController.user.value?.name ??
-                'Guest',
+                controller.user.value?.name ?? 'Guest',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               accountEmail: Text(
-                // userController.user.value?.email ??
-                'No email',
+                controller.user.value?.email ?? 'No email',
                 style: const TextStyle(
                   fontSize: 14,
                 ),

@@ -145,9 +145,9 @@ class IncomesController extends GetxController {
         body: json.encode(income.toJson()),
       );
       if (response.statusCode == 201 || response.statusCode == 200) {
+        Get.snackbar('Success', 'Incomes added successfully!');
         await fetchIncomes();
-
-        Get.snackbar('Success', 'Income added successfully!');
+        Get.snackbar('Success', 'Incomes added successfully!');
 
         Future.delayed(Duration(milliseconds: 800), () {
           Get.offNamed('/IncomesScreens');
@@ -157,6 +157,7 @@ class IncomesController extends GetxController {
       }
     } catch (e) {
       Get.snackbar('Error', 'An error occurred: $e');
+      print("$e");
     }
   }
 

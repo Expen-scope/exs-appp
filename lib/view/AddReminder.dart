@@ -18,26 +18,26 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController collectedController = TextEditingController();
-  bool isLoading = false;
 
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
 
   Future<void> saveReminder() async {
-    setState(() => isLoading = true);
+    print("🔵 saveReminder called");
+    print("selectedDate: $selectedDate");
+    print("selectedTime: $selectedTime");
     if (nameController.text.isEmpty ||
         priceController.text.isEmpty ||
         collectedController.text.isEmpty ||
         selectedDate == null ||
         selectedTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please fill all fields are required'),
-          duration: Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-        ),
+      Get.snackbar(
+        "Missing Information",
+        "Please fill all fields, including date and time.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
       );
-      setState(() => isLoading = false);
       return;
     }
 
@@ -45,14 +45,14 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
       double.parse(priceController.text);
       double.parse(collectedController.text);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Price and collected amount must be valid numbers'),
-          duration: Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-        ),
+      Get.snackbar(
+        "Invalid Input",
+        "Price and collected amount must be valid numbers.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
-      setState(() => isLoading = false);
+
       return;
     }
 
@@ -73,13 +73,23 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
     );
 
     bool success = await reminderController.addReminder(newReminder);
-    setState(() => isLoading = false);
 
     if (success) {
-      DialogHelper.showSuccessDialog(
-        title: 'Success',
-        message: 'Reminder added successfully',
-        onOkPressed: () => Get.toNamed("/Reminder"),
+      Get.back();
+      Get.snackbar(
+        "Success",
+        "Reminder added successfully",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } else {
+      Get.snackbar(
+        "Error",
+        reminderController.errorMessage.value.isNotEmpty
+            ? reminderController.errorMessage.value
+            : "An unknown error occurred.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
     }
   }
@@ -90,28 +100,15 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Color(0xFF507da0),
-              onPrimary: Colors.white,
-              onSurface: Colors.black,
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Color(0xFF507da0),
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
     if (picked != null) {
-      setState(() => selectedDate = picked);
+      print("✅ Date picked: $picked");
+      setState(() {
+        selectedDate = picked;
+      });
+    } else {
+      print("❌ Date not picked");
     }
-    setState(() => isLoading = false);
   }
 
   Future<void> pickTime() async {
@@ -250,7 +247,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                     ),
                     child: Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 4.0, vertical: 8),
+                          EdgeInsets.symmetric(horizontal: 1.0, vertical: 8),
                       child: Row(
                         children: [
                           Text(
@@ -273,21 +270,27 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
             Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: hight(context) * .1),
-                child: Container(
-                  color: Color(0xFF006000),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size.fromHeight(50),
-                      backgroundColor: Color(0xFF006000),
-                      shadowColor: Colors.transparent,
-                    ),
-                    onPressed: saveReminder,
-                    child: Text(
-                      "Add",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
-                ),
+                child: Obx(() => ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size.fromHeight(50),
+                        backgroundColor: Color(0xFF006000),
+                        disabledBackgroundColor:
+                            Color(0xFF006000).withOpacity(0.5),
+                      ),
+                      onPressed: reminderController.isLoading.value
+                          ? null
+                          : saveReminder,
+                      child: reminderController.isLoading.value
+                          ? const CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            )
+                          : const Text(
+                              "Add",
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white),
+                            ),
+                    )),
               ),
             ),
           ],
