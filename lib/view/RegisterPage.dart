@@ -57,7 +57,7 @@ class RegisterPage extends StatelessWidget {
           _buildTextField("Enter your name",
               (val) => controller.name.value = val, controller.nameError),
           SizedBox(height: MediaQuery.of(context).size.width * 0.01),
-          _buildTextField("Enter Gmail", (val) => controller.email.value = val,
+          _buildTextField("Enter Email", (val) => controller.email.value = val,
               controller.emailError),
           SizedBox(height: MediaQuery.of(context).size.width * 0.01),
           _buildTextField(

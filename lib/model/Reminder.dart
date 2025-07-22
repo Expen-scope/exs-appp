@@ -26,8 +26,8 @@ class ReminderModel {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'price': price.toString(),
-      'collectedoprice': collectedoprice.toString(),
+      'price': price,
+      'collectedoprice': collectedoprice,
       'time': time.toIso8601String(),
     };
   }

@@ -105,17 +105,13 @@ class Reminders extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
-                              icon: const Icon(
-                                Icons.edit,
-                                color: Color(0xFF2e495e),
-                              ),
-                              onPressed: () async {
-                                await Get.to(
-                                  () => EditReminderScreen(reminder: reminder),
-                                  fullscreenDialog: true,
-                                );
-                              },
-                            ),
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Color(0xFF2e495e),
+                                ),
+                                onPressed: () {
+                                  Get.toNamed('/addReminder');
+                                }),
                             IconButton(
                               icon: const Icon(Icons.delete,
                                   color: Color(0xFF264653)),

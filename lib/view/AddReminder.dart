@@ -76,6 +76,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
 
     if (success) {
       Get.back();
+
       Get.snackbar(
         "Success",
         "Reminder added successfully",

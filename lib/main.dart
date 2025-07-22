@@ -5,6 +5,7 @@ import 'package:abo_najib_2/view/%20otp_verification_page.dart';
 import 'package:abo_najib_2/view/AddExpense.dart';
 import 'package:abo_najib_2/view/AddGoalScreen.dart';
 import 'package:abo_najib_2/view/AddIncomes.dart';
+import 'package:abo_najib_2/view/AddReminder.dart';
 import 'package:abo_najib_2/view/EditGoalScreen.dart';
 import 'package:abo_najib_2/view/ExpencesScreens.dart';
 import 'package:abo_najib_2/view/GoalScreen.dart';
@@ -164,6 +165,11 @@ class MyApp extends StatelessWidget {
           name: ("/WelcomeScreen"),
           page: () => WelcomeScreen(),
         ),
+        GetPage(
+          name: '/addReminder',
+          page: () => AddReminderScreen(),
+        ),
+
         GetPage(
           name: ("/OtpVerificationPage"),
           page: () => OtpVerificationPage(

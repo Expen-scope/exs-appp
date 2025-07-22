@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +15,7 @@ class ReminderController extends GetxController {
   Timer? _checkTimer;
   final Dio _dio = Dio();
   final String _baseUrl = "http://10.0.2.2:8000/api/user";
+  final _storage = const FlutterSecureStorage();
 
   @override
   void onInit() {
@@ -24,8 +26,7 @@ class ReminderController extends GetxController {
   }
 
   Future<String?> _getAuthToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('auth_token');
+    return await _storage.read(key: 'access_token');
   }
 
   void _initializeNotifications() {
@@ -96,8 +97,15 @@ class ReminderController extends GetxController {
       print("📄 Response data: ${response.data}");
 
       if (response.statusCode == 201 || response.statusCode == 200) {
-        final newReminder = ReminderModel.fromJson(response.data);
-        reminders.add(newReminder);
+        Get.snackbar('Success', 'Expense added successfully!');
+        await fetchReminders();
+        Get.snackbar('Success', 'Expense added successfully!');
+
+        Future.delayed(Duration(milliseconds: 800), () {
+          final newReminder = ReminderModel.fromJson(response.data);
+          reminders.add(newReminder);
+          Get.offNamed('/Reminder');
+        });
         return true;
       } else {
         errorMessage.value =
