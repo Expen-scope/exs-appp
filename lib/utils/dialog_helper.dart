@@ -24,9 +24,7 @@ class DialogHelper {
         fontWeight: FontWeight.bold,
         color: Colors.green,
       ),
-      descTextStyle: const TextStyle(
-        fontSize: 16,
-      ),
+      descTextStyle: const TextStyle(fontSize: 16),
     ).show();
   }
 
@@ -51,9 +49,7 @@ class DialogHelper {
         fontWeight: FontWeight.bold,
         color: Colors.red,
       ),
-      descTextStyle: const TextStyle(
-        fontSize: 16,
-      ),
+      descTextStyle: const TextStyle(fontSize: 16),
     ).show();
   }
 
@@ -80,9 +76,7 @@ class DialogHelper {
         fontWeight: FontWeight.bold,
         color: Colors.orange,
       ),
-      descTextStyle: const TextStyle(
-        fontSize: 16,
-      ),
+      descTextStyle: const TextStyle(fontSize: 16),
     ).show();
   }
 
@@ -106,9 +100,7 @@ class DialogHelper {
         fontWeight: FontWeight.bold,
         color: Colors.blue,
       ),
-      descTextStyle: const TextStyle(
-        fontSize: 16,
-      ),
+      descTextStyle: const TextStyle(fontSize: 16),
     ).show();
   }
 
@@ -135,9 +127,7 @@ class DialogHelper {
         fontWeight: FontWeight.bold,
         color: Colors.blue,
       ),
-      descTextStyle: const TextStyle(
-        fontSize: 16,
-      ),
+      descTextStyle: const TextStyle(fontSize: 16),
     ).show();
   }
 }

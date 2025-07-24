@@ -14,10 +14,13 @@ class ReminderModel {
   });
 
   factory ReminderModel.fromJson(Map<String, dynamic> json) {
+    final utcTime = DateTime.parse(json['time'] as String);
+    print(" Time from API raw: ${json['time']}");
+
     return ReminderModel(
       id: json['id'],
       name: json['name'],
-      time: DateTime.parse(json['time']),
+      time: utcTime.toLocal(),
       price: double.parse(json['price'].toString()),
       collectedoprice: double.parse(json['collectedoprice'].toString()),
     );
@@ -28,7 +31,7 @@ class ReminderModel {
       'name': name,
       'price': price,
       'collectedoprice': collectedoprice,
-      'time': time.toIso8601String(),
+      'time': time.toUtc().toIso8601String(),
     };
   }
 }
