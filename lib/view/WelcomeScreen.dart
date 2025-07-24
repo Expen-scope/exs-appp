@@ -52,10 +52,7 @@ class WelcomeScreen extends StatelessWidget {
                   Text(
                     'Track your expenses, analyze your spending, and achieve your financail goals with ease.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF006000),
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Color(0xFF006000), fontSize: 16),
                   ),
                 ],
               ),
@@ -63,9 +60,10 @@ class WelcomeScreen extends StatelessWidget {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.05,
-                        right: MediaQuery.of(context).size.width * 0.05,
-                        bottom: MediaQuery.of(context).size.width * 0.05),
+                      left: MediaQuery.of(context).size.width * 0.05,
+                      right: MediaQuery.of(context).size.width * 0.05,
+                      bottom: MediaQuery.of(context).size.width * 0.05,
+                    ),
                     child: _buildAuthButton(
                       context: context,
                       label: 'Login',
@@ -78,9 +76,10 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   Padding(
                     padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.05,
-                        right: MediaQuery.of(context).size.width * 0.05,
-                        bottom: MediaQuery.of(context).size.width * 0.1),
+                      left: MediaQuery.of(context).size.width * 0.05,
+                      right: MediaQuery.of(context).size.width * 0.05,
+                      bottom: MediaQuery.of(context).size.width * 0.1,
+                    ),
                     child: _buildAuthButton(
                       context: context,
                       label: 'Register',

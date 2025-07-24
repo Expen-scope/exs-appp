@@ -108,9 +108,10 @@ class _EditReminderScreenState extends State<EditReminderScreen> {
               title: "${(progress * 100).toStringAsFixed(1)}%",
               radius: 60,
               titleStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             PieChartSectionData(
               value: (1 - progress) * 100,
@@ -130,9 +131,10 @@ class _EditReminderScreenState extends State<EditReminderScreen> {
       child: Text(
         "Collected: ${saved.toStringAsFixed(2)} / ${total.toStringAsFixed(2)}",
         style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF2e495e)),
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF2e495e),
+        ),
       ),
     );
   }
@@ -146,8 +148,9 @@ class _EditReminderScreenState extends State<EditReminderScreen> {
             "Update collected amount (remaining: ${remaining.toStringAsFixed(2)})",
         labelStyle: TextStyle(color: Color(0xFF264653), fontSize: 16),
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFF2e495e))),
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFF2e495e)),
+        ),
         prefixIcon: Icon(Icons.attach_money, color: Color(0xFF2e495e)),
         suffixIcon: IconButton(
           icon: const Icon(Icons.clear),
@@ -174,13 +177,17 @@ class _EditReminderScreenState extends State<EditReminderScreen> {
           label: const Text(
             "Update",
             style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: Color(0xFF006000),
             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         ),
       ),

@@ -17,65 +17,70 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: CustomDrawer(context),
-        key: _scaffoldKey,
+      drawer: CustomDrawer(context),
+      key: _scaffoldKey,
+      backgroundColor: const Color(0xFFF8F9FA),
+      appBar: AppBar(
         backgroundColor: const Color(0xFFF8F9FA),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFFF8F9FA),
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.menu, color: Color(0xFF006000)),
-            onPressed: () {
-              _scaffoldKey.currentState?.openDrawer();
-            },
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Obx(() => DropdownButton<String>(
-                    value: controller.selectedPeriod.value,
-                    underline: const SizedBox.shrink(),
-                    icon: const Icon(Icons.calendar_today,
-                        color: Color(0xFF006000)),
-                    onChanged: (String? newValue) {
-                      if (newValue != null) controller.setPeriod(newValue);
-                    },
-                    items: <String>['week', 'month', 'year']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value.capitalizeFirst!,
-                          style: const TextStyle(
-                              color: Color(0xFF006000),
-                              fontWeight: FontWeight.w500),
-                        ),
-                      );
-                    }).toList(),
-                  )),
-            ),
-          ],
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Color(0xFF006000)),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
         ),
-        body: Obx(
-          () {
-            return controller.isLoading.value
-                ? const Center(
-                    child: CircularProgressIndicator(color: Color(0xFF006000)))
-                : RefreshIndicator(
-                    onRefresh: controller.fetchAllData,
-                    child: ListView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      children: [
-                        Card_Homepage(context),
-                        const SizedBox(height: 24),
-                        _buildTabs(context),
-                        const SizedBox(height: 24),
-                        _buildActiveTabContent(context),
-                      ],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Obx(
+              () => DropdownButton<String>(
+                value: controller.selectedPeriod.value,
+                underline: const SizedBox.shrink(),
+                icon: const Icon(
+                  Icons.calendar_today,
+                  color: Color(0xFF006000),
+                ),
+                onChanged: (String? newValue) {
+                  if (newValue != null) controller.setPeriod(newValue);
+                },
+                items: <String>['week', 'month', 'year']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value.capitalizeFirst!,
+                      style: const TextStyle(
+                        color: Color(0xFF006000),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   );
-          },
-        ));
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: Obx(() {
+        return controller.isLoading.value
+            ? const Center(
+                child: CircularProgressIndicator(color: Color(0xFF006000)),
+              )
+            : RefreshIndicator(
+                onRefresh: controller.fetchAllData,
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  children: [
+                    Card_Homepage(context),
+                    const SizedBox(height: 24),
+                    _buildTabs(context),
+                    const SizedBox(height: 24),
+                    _buildActiveTabContent(context),
+                  ],
+                ),
+              );
+      }),
+    );
   }
 
   Widget _buildActiveTabContent(BuildContext context) {
@@ -99,17 +104,24 @@ class HomePage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Spending",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text(
+          "Spending",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
-        Obx(() => Text(
-              NumberFormat.currency(symbol: '\$', decimalDigits: 2)
-                  .format(controller.totalExpenses.value),
-              style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-            )),
+        Obx(
+          () => Text(
+            NumberFormat.currency(
+              symbol: '\$',
+              decimalDigits: 2,
+            ).format(controller.totalExpenses.value),
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ),
         Obx(() {
           final change = controller.expensePercentageChange.value;
           final color = change >= 0 ? Colors.red : Colors.green;
@@ -118,14 +130,19 @@ class HomePage extends StatelessWidget {
           return Text(
             "vs Last Month ${sign}${change.toStringAsFixed(1)}%",
             style: TextStyle(
-                fontSize: 14, color: color, fontWeight: FontWeight.w500),
+              fontSize: 14,
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
           );
         }),
         const SizedBox(height: 20),
         SizedBox(height: 150, child: _buildChart(isIncome: false)),
         const SizedBox(height: 24),
-        const Text("Recent Transactions",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text(
+          "Recent Transactions",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 12),
         ListView.builder(
           shrinkWrap: true,
@@ -153,17 +170,24 @@ class HomePage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Income",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text(
+          "Income",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
-        Obx(() => Text(
-              NumberFormat.currency(symbol: '\$', decimalDigits: 2)
-                  .format(controller.totalIncome.value),
-              style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-            )),
+        Obx(
+          () => Text(
+            NumberFormat.currency(
+              symbol: '\$',
+              decimalDigits: 2,
+            ).format(controller.totalIncome.value),
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ),
         Obx(() {
           final change = controller.incomePercentageChange.value;
           final color = change >= 0 ? Colors.green : Colors.red;
@@ -172,14 +196,19 @@ class HomePage extends StatelessWidget {
           return Text(
             "vs Last Month ${sign}${change.toStringAsFixed(1)}%",
             style: TextStyle(
-                fontSize: 14, color: color, fontWeight: FontWeight.w500),
+              fontSize: 14,
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
           );
         }),
         const SizedBox(height: 20),
         SizedBox(height: 150, child: _buildChart(isIncome: true)),
         const SizedBox(height: 24),
-        const Text("Recent Transactions",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text(
+          "Recent Transactions",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 12),
         ListView.builder(
           shrinkWrap: true,
@@ -219,70 +248,95 @@ class HomePage extends StatelessWidget {
         key: const ValueKey('category_breakdown'),
         title: "Category Breakdown",
         height: 320,
-        child: Obx(() => PieChart(
-              PieChartData(
-                sectionsSpace: 2,
-                centerSpaceRadius: 40,
-                sections: controller.categoryAnalysis.map((data) {
-                  final isIncome = data['type'] == 'income';
-                  return PieChartSectionData(
-                    color: data['color'],
-                    value: data['amount'],
-                    title: '${data['percentage']}%',
-                    radius: isIncome ? 60 : 50,
-                    titleStyle: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  );
-                }).toList(),
-              ),
-            )),
+        child: Obx(
+          () => PieChart(
+            PieChartData(
+              sectionsSpace: 2,
+              centerSpaceRadius: 40,
+              sections: controller.categoryAnalysis.map((data) {
+                final isIncome = data['type'] == 'income';
+                return PieChartSectionData(
+                  color: data['color'],
+                  value: data['amount'],
+                  title: '${data['percentage']}%',
+                  radius: isIncome ? 60 : 50,
+                  titleStyle: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
       ),
       'summary_table': _buildAnalysisCard(
         key: const ValueKey('summary_table'),
         title: "Summary Table",
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: Obx(() => DataTable(
-                columnSpacing: 20,
-                horizontalMargin: 10,
-                headingRowHeight: 40,
-                columns: const [
-                  DataColumn(
-                      label: Text('Category',
-                          style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(
-                      label: Text('Type',
-                          style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(
-                      label: Text('Amount',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      numeric: true),
-                ],
-                rows: controller.categoryAnalysis.map((data) {
-                  final isIncome = data['type'] == 'income';
-                  return DataRow(
-                    cells: [
-                      DataCell(Row(
+          child: Obx(
+            () => DataTable(
+              columnSpacing: 20,
+              horizontalMargin: 10,
+              headingRowHeight: 40,
+              columns: const [
+                DataColumn(
+                  label: Text(
+                    'Category',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    'Type',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    'Amount',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  numeric: true,
+                ),
+              ],
+              rows: controller.categoryAnalysis.map((data) {
+                final isIncome = data['type'] == 'income';
+                return DataRow(
+                  cells: [
+                    DataCell(
+                      Row(
                         children: [
                           Icon(Icons.circle, color: data['color'], size: 12),
                           const SizedBox(width: 8),
                           Text(data['category']),
                         ],
-                      )),
-                      DataCell(Text(isIncome ? 'Income' : 'Expense',
-                          style: TextStyle(
-                              color: isIncome ? Colors.green : Colors.red))),
-                      DataCell(Text(
-                          NumberFormat.currency(symbol: '\$', decimalDigits: 2)
-                              .format(data['amount']),
-                          style: const TextStyle(fontWeight: FontWeight.w500))),
-                    ],
-                  );
-                }).toList(),
-              )),
+                      ),
+                    ),
+                    DataCell(
+                      Text(
+                        isIncome ? 'Income' : 'Expense',
+                        style: TextStyle(
+                          color: isIncome ? Colors.green : Colors.red,
+                        ),
+                      ),
+                    ),
+                    DataCell(
+                      Text(
+                        NumberFormat.currency(
+                          symbol: '\$',
+                          decimalDigits: 2,
+                        ).format(data['amount']),
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
         ),
       ),
     };
@@ -328,7 +382,9 @@ class HomePage extends StatelessWidget {
                   Text(
                     title,
                     style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Icon(Icons.drag_handle, color: Colors.grey.shade400),
                 ],
@@ -408,14 +464,19 @@ class HomePage extends StatelessWidget {
             style: TextStyle(fontSize: 18, color: Colors.white70),
           ),
           const SizedBox(height: 8),
-          Obx(() => Text(
-                NumberFormat.currency(symbol: '\$', decimalDigits: 2)
-                    .format(controller.balance.value),
-                style: const TextStyle(
-                    fontSize: 36,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold),
-              )),
+          Obx(
+            () => Text(
+              NumberFormat.currency(
+                symbol: '\$',
+                decimalDigits: 2,
+              ).format(controller.balance.value),
+              style: const TextStyle(
+                fontSize: 36,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -436,26 +497,31 @@ class HomePage extends StatelessWidget {
         gridData: FlGridData(show: false),
         titlesData: FlTitlesData(
           bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
-                    int index = value.toInt();
-                    if (index >= 0 && index < data.length) {
-                      String month =
-                          data[index]['month'].toString().split(' ')[0];
-                      return Text(month,
-                          style: const TextStyle(
-                              color: Colors.grey, fontSize: 12));
-                    }
-                    return const Text('');
-                  },
-                  interval: 1)),
-          leftTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                int index = value.toInt();
+                if (index >= 0 && index < data.length) {
+                  String month = data[index]['month'].toString().split(' ')[0];
+                  return Text(
+                    month,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  );
+                }
+                return const Text('');
+              },
+              interval: 1,
+            ),
+          ),
+          leftTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         borderData: FlBorderData(show: false),
         lineBarsData: [
@@ -502,8 +568,9 @@ class HomePage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(12)),
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: icon,
           ),
           const SizedBox(width: 12),
@@ -511,12 +578,18 @@ class HomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(category,
-                    style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                Text(
+                  category,
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
               ],
             ),
           ),
@@ -526,15 +599,18 @@ class HomePage extends StatelessWidget {
               Text(
                 formattedAmount,
                 style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: amount > 0 ? Colors.green : Colors.black),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: amount > 0 ? Colors.green : Colors.black,
+                ),
               ),
               const SizedBox(height: 4),
-              Text(formattedDate,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              Text(
+                formattedDate,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -544,9 +620,11 @@ class HomePage extends StatelessWidget {
     final data = controller.incomeExpenseComparisonData;
     if (data.isEmpty) return const Center(child: Text("No data to compare."));
     final double maxYValue = data
-        .map((d) => (d['income'] as double) > (d['expense'] as double)
-            ? (d['income'] as double)
-            : (d['expense'] as double))
+        .map(
+          (d) => (d['income'] as double) > (d['expense'] as double)
+              ? (d['income'] as double)
+              : (d['expense'] as double),
+        )
         .reduce((a, b) => a > b ? a : b);
     return BarChart(
       BarChartData(
@@ -555,12 +633,15 @@ class HomePage extends StatelessWidget {
         gridData: FlGridData(show: false),
         borderData: FlBorderData(show: false),
         titlesData: FlTitlesData(
-          topTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          leftTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          leftTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -589,15 +670,17 @@ class HomePage extends StatelessWidget {
             x: index,
             barRods: [
               BarChartRodData(
-                  toY: item['income'],
-                  color: Colors.green,
-                  width: 12,
-                  borderRadius: BorderRadius.circular(4)),
+                toY: item['income'],
+                color: Colors.green,
+                width: 12,
+                borderRadius: BorderRadius.circular(4),
+              ),
               BarChartRodData(
-                  toY: item['expense'],
-                  color: Colors.red,
-                  width: 12,
-                  borderRadius: BorderRadius.circular(4)),
+                toY: item['expense'],
+                color: Colors.red,
+                width: 12,
+                borderRadius: BorderRadius.circular(4),
+              ),
             ],
           );
         }).toList(),
@@ -608,14 +691,17 @@ class HomePage extends StatelessWidget {
               return BarTooltipItem(
                 '$label\n',
                 const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
                 children: <TextSpan>[
                   TextSpan(
                     text: NumberFormat.currency(symbol: '\$').format(rod.toY),
                     style: TextStyle(
-                        color: rod.color,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
+                      color: rod.color,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               );
@@ -666,12 +752,15 @@ class HomePage extends StatelessWidget {
             Text(
               '${rate.toStringAsFixed(1)}%',
               style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: indicatorColor),
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                color: indicatorColor,
+              ),
             ),
-            const Text("of income saved",
-                style: TextStyle(fontSize: 14, color: Colors.grey)),
+            const Text(
+              "of income saved",
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
           ],
         ),
       ],

@@ -40,14 +40,18 @@ class OtpVerificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(title: Text("Verify OTP"), backgroundColor: Color(0xFF006000)),
+      appBar: AppBar(
+        title: Text("Verify OTP"),
+        backgroundColor: Color(0xFF006000),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            Text("Enter the 6-digit OTP sent to $email",
-                style: TextStyle(fontSize: 16)),
+            Text(
+              "Enter the 6-digit OTP sent to $email",
+              style: TextStyle(fontSize: 16),
+            ),
             SizedBox(height: 20),
             PinCodeTextField(
               appContext: context,
@@ -68,19 +72,24 @@ class OtpVerificationPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            Obx(() => ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF006000),
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24)),
+            Obx(
+              () => ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF006000),
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
                   ),
-                  onPressed: isLoading.value ? null : verifyOtp,
-                  child: isLoading.value
-                      ? CircularProgressIndicator(color: Colors.white)
-                      : Text("Verify",
-                          style: TextStyle(fontSize: 18, color: Colors.white)),
-                )),
+                ),
+                onPressed: isLoading.value ? null : verifyOtp,
+                child: isLoading.value
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        "Verify",
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+              ),
+            ),
           ],
         ),
       ),
@@ -93,27 +102,24 @@ class HttpHel {
 
   static Future<dynamic> verifyOtp(String email, String otp) async {
     try {
-      Response response = await dio.post('/verify-otp', data: {
-        'email': email,
-        'otp': otp,
-      });
+      Response response = await dio.post(
+        '/verify-otp',
+        data: {'email': email, 'otp': otp},
+      );
 
       if (response.statusCode == 200) {
         return {
           'success': true,
-          'message': response.data['message'] ?? 'OTP verified'
+          'message': response.data['message'] ?? 'OTP verified',
         };
       } else {
         return {
           'success': false,
-          'message': response.data['message'] ?? 'Verification failed'
+          'message': response.data['message'] ?? 'Verification failed',
         };
       }
     } catch (e) {
-      return {
-        'success': false,
-        'message': e.toString(),
-      };
+      return {'success': false, 'message': e.toString()};
     }
   }
 }

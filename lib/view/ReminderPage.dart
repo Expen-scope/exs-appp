@@ -27,7 +27,8 @@ class Reminders extends StatelessWidget {
           }
           if (reminderController.errorMessage.value.isNotEmpty) {
             return Center(
-                child: Text('Error: ${reminderController.errorMessage.value}'));
+              child: Text('Error: ${reminderController.errorMessage.value}'),
+            );
           }
 
           if (reminderController.reminders.isEmpty) {
@@ -39,104 +40,94 @@ class Reminders extends StatelessWidget {
             );
           }
 
-          return ReorderableListView.builder(
-            itemCount: reminderController.reminders.length,
-            onReorder: (oldIndex, newIndex) {
-              if (newIndex > oldIndex) newIndex--;
-              final item = reminderController.reminders[oldIndex];
-              reminderController.reminders.removeAt(oldIndex);
-              reminderController.reminders.insert(newIndex, item);
-            },
-            itemBuilder: (context, index) {
-              final reminder = reminderController.reminders[index];
-              final remainingDuration =
-                  reminder.time.difference(DateTime.now());
-              final remainingMinutes = remainingDuration.inMinutes % 60;
-              final remainingSeconds = remainingDuration.inSeconds % 60;
+          return Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height * .0,
+              horizontal: MediaQuery.of(context).size.height * .002,
+            ),
+            child: ReorderableListView.builder(
+              itemCount: reminderController.reminders.length,
+              onReorder: (oldIndex, newIndex) {
+                if (newIndex > oldIndex) newIndex--;
+                final item = reminderController.reminders[oldIndex];
+                reminderController.reminders.removeAt(oldIndex);
+                reminderController.reminders.insert(newIndex, item);
+              },
+              itemBuilder: (context, index) {
+                final reminder = reminderController.reminders[index];
+                print(" Reminder displayed time: ${reminder.time}");
+                final remainingDuration = reminder.time.difference(
+                  DateTime.now(),
+                );
+                final remainingMinutes = remainingDuration.inMinutes % 60;
+                final remainingSeconds = remainingDuration.inSeconds % 60;
 
-              return Card(
-                key: ValueKey(reminder.id),
-                elevation: 5,
-                color: Colors.grey[200],
-                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                child: InkWell(
+                return ListTile(
+                  key: ValueKey('reminder_${reminder.id ?? 'null'}_$index'),
                   onTap: () async {
                     await Get.to(
                       () => EditReminderScreen(reminder: reminder),
                       fullscreenDialog: true,
                     );
                   },
-                  child: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          reminder.name ?? 'No Title',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2e495e),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Amount: ${currencyFormat.format(reminder.price)}',
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
-                        ),
-                        Text(
-                          'Collected: ${currencyFormat.format(reminder.collectedoprice)}',
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
-                        ),
-                        Text(
-                          'Due in: ${remainingDuration.inDays} days, '
-                          '${remainingDuration.inHours.remainder(24)} hours',
-                          style: TextStyle(fontSize: 14, color: Colors.black54),
-                        ),
-                        Text(
-                          'At: ${DateFormat('yyyy-MM-dd HH:mm').format(reminder.time)}',
-                          style: TextStyle(fontSize: 14, color: Colors.black54),
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                                icon: const Icon(
-                                  Icons.edit,
-                                  color: Color(0xFF2e495e),
-                                ),
-                                onPressed: () {
-                                  Get.toNamed('/addReminder');
-                                }),
-                            IconButton(
-                              icon: const Icon(Icons.delete,
-                                  color: Color(0xFF264653)),
-                              onPressed: () async {
-                                bool success = await reminderController
-                                    .deleteReminder(reminder.id!);
-                                if (success) {
-                                  Get.snackbar("Success",
-                                      "Reminder deleted successfully",
-                                      snackPosition: SnackPosition.BOTTOM);
-                                } else {
-                                  Get.snackbar(
-                                      "Error", "Failed to delete reminder",
-                                      snackPosition: SnackPosition.BOTTOM);
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.of(context).size.height * .01,
+                    horizontal: MediaQuery.of(context).size.height * .01,
+                  ),
+                  leading: Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: MediaQuery.of(context).size.height * .01,
+                      horizontal: MediaQuery.of(context).size.height * .02,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF0F5F1),
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    child: Icon(
+                      _getIconForReminder(reminder.name ?? ''),
+                      color: Colors.black87,
+                      size: 28,
                     ),
                   ),
-                ),
-              );
-            },
+                  title: Text(
+                    reminder.name ?? 'No Title',
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  subtitle: Text(
+                    _getDueDateString(remainingDuration),
+                    style: TextStyle(fontSize: 14, color: Colors.green[800]),
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.redAccent,
+                    ),
+                    onPressed: () async {
+                      bool success = await reminderController.deleteReminder(
+                        reminder.id!,
+                      );
+                      if (success) {
+                        Get.snackbar(
+                          "Success",
+                          "Reminder deleted successfully",
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+                      } else {
+                        Get.snackbar(
+                          "Error",
+                          "Failed to delete reminder",
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
           );
         }),
       ),
@@ -149,5 +140,36 @@ class Reminders extends StatelessWidget {
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
+  }
+
+  IconData _getIconForReminder(String reminderName) {
+    final name = reminderName.toLowerCase();
+    if (name.contains('rent')) {
+      return Icons.home_outlined;
+    } else if (name.contains('card')) {
+      return Icons.credit_card_outlined;
+    } else if (name.contains('utilities')) {
+      return Icons.chat_bubble_outline;
+    } else {
+      return Icons.list_alt_outlined;
+    }
+  }
+
+  String _getDueDateString(Duration remainingDuration) {
+    if (remainingDuration.isNegative) return 'Overdue';
+
+    final days = remainingDuration.inDays;
+    if (days >= 7) {
+      final weeks = (days / 7).floor();
+      return 'Due in ${weeks} week${weeks > 1 ? 's' : ''}';
+    }
+    if (days > 0) {
+      return 'Due in ${days} day${days > 1 ? 's' : ''}';
+    }
+    final hours = remainingDuration.inHours;
+    if (hours > 0) {
+      return 'Due in ${hours} hour${hours > 1 ? 's' : ''}';
+    }
+    return 'Due soon';
   }
 }

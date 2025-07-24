@@ -5,9 +5,9 @@ import '../controller/LoginController.dart';
 
 class LoginPage extends GetView<LoginController> {
   final _formKey = GlobalKey<FormState>();
-//#006000
-//#F8FCF8
-//#DBF0DB
+  //#006000
+  //#F8FCF8
+  //#DBF0DB
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,11 +25,15 @@ class LoginPage extends GetView<LoginController> {
                 SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                 Container(
                   padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.05),
+                    horizontal: MediaQuery.of(context).size.width * 0.05,
+                  ),
                   child: Column(
                     children: [
-                      _buildTextField("Gmail", controller.emailController,
-                          "Enter a valid email address"),
+                      _buildTextField(
+                        "Gmail",
+                        controller.emailController,
+                        "Enter a valid email address",
+                      ),
                       SizedBox(height: hight(context) * 0.001),
                       _buildPasswordField(),
                       SizedBox(height: hight(context) * 0.04),
@@ -37,22 +41,22 @@ class LoginPage extends GetView<LoginController> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Don't have an account?",
-                              style: TextStyle(
-                                color: Color(0xFF006000),
-                              )),
+                          Text(
+                            "Don't have an account?",
+                            style: TextStyle(color: Color(0xFF006000)),
+                          ),
                           TextButton(
                             onPressed: () => Get.toNamed("/Register"),
-                            child: Text("Register",
-                                style: TextStyle(
-                                  color: Color(0xFF006000),
-                                )),
+                            child: Text(
+                              "Register",
+                              style: TextStyle(color: Color(0xFF006000)),
+                            ),
                           ),
                         ],
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -76,8 +80,11 @@ class LoginPage extends GetView<LoginController> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController textController,
-      String validationMsg) {
+  Widget _buildTextField(
+    String label,
+    TextEditingController textController,
+    String validationMsg,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -89,16 +96,14 @@ class LoginPage extends GetView<LoginController> {
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: Colors.white,
-                )),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.white),
+            ),
             hintText: label,
             border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: Colors.white,
-                )),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.white),
+            ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Colors.white, width: 2),
@@ -121,63 +126,67 @@ class LoginPage extends GetView<LoginController> {
       children: [
         Text("Password", style: TextStyle(color: Colors.white, fontSize: 16)),
         SizedBox(height: 5),
-        Obx(() => TextFormField(
-              cursorColor: Color(0xFF006000),
-              controller: controller.passwordController,
-              obscureText: !controller.isPasswordVisible.value,
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                    )),
-                hintText: 'Password',
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                    )),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                ),
-                filled: true,
-                fillColor: Color(0xFFDBF0DB),
-                suffixIcon: IconButton(
-                  icon: Icon(controller.isPasswordVisible.value
-                      ? Icons.visibility
-                      : Icons.visibility_off),
-                  onPressed: controller.togglePasswordVisibility,
-                ),
+        Obx(
+          () => TextFormField(
+            cursorColor: Color(0xFF006000),
+            controller: controller.passwordController,
+            obscureText: !controller.isPasswordVisible.value,
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.white),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) return "Enter the password";
-                return null;
-              },
-            )),
+              hintText: 'Password',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.white, width: 2),
+              ),
+              filled: true,
+              fillColor: Color(0xFFDBF0DB),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  controller.isPasswordVisible.value
+                      ? Icons.visibility
+                      : Icons.visibility_off,
+                ),
+                onPressed: controller.togglePasswordVisibility,
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) return "Enter the password";
+              return null;
+            },
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildLoginButton(BuildContext context) {
-    return Obx(() => SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 14),
-              backgroundColor: Color(0xFF006000),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
+    return Obx(
+      () => SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(vertical: 14),
+            backgroundColor: Color(0xFF006000),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
             ),
-            onPressed: controller.validateInputs,
-            child: controller.isLoading.value
-                ? CircularProgressIndicator(color: Colors.white)
-                : Text(
-                    "LOGIN",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
           ),
-        ));
+          onPressed: controller.validateInputs,
+          child: controller.isLoading.value
+              ? CircularProgressIndicator(color: Colors.white)
+              : Text(
+                  "LOGIN",
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+        ),
+      ),
+    );
   }
 }

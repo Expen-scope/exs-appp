@@ -47,8 +47,9 @@ class ExpencesScreens extends StatelessWidget {
                                   controller.expenseCategoriesData[
                                           expense.category] ??
                                       CategoryInfo(
-                                          color: Colors.grey,
-                                          icon: Icon(Icons.category));
+                                        color: Colors.grey,
+                                        icon: Icon(Icons.category),
+                                      );
 
                               return PieChartSectionData(
                                 value: expense.price,
@@ -78,13 +79,17 @@ class ExpencesScreens extends StatelessWidget {
                     final categoryInfo =
                         controller.expenseCategoriesData[expense.category] ??
                             CategoryInfo(
-                                color: Colors.grey, icon: Icon(Icons.category));
+                              color: Colors.grey,
+                              icon: Icon(Icons.category),
+                            );
 
                     return Card(
                       elevation: 5,
                       color: Colors.grey[200],
                       margin: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 15),
+                        vertical: 10,
+                        horizontal: 15,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -100,13 +105,15 @@ class ExpencesScreens extends StatelessWidget {
                         title: Text(expense.source),
                         subtitle: Text("\$${expense.price.toStringAsFixed(2)}"),
                         trailing: IconButton(
-                            icon: const Icon(Icons.delete,
-                                color: Color(0xFF264653)),
-                            onPressed: () async {
-                              final expenseId =
-                                  controller.listExpenses[index].id;
-                              await controller.removeExpense(expenseId!);
-                            }),
+                          icon: const Icon(
+                            Icons.delete,
+                            color: Color(0xFF264653),
+                          ),
+                          onPressed: () async {
+                            final expenseId = controller.listExpenses[index].id;
+                            await controller.removeExpense(expenseId!);
+                          },
+                        ),
                       ),
                     );
                   },

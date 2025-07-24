@@ -43,8 +43,9 @@ class IncomesScreens extends StatelessWidget {
                               final categoryInfo = controller
                                       .incomeCategoriesData[income.category] ??
                                   CategoryInfo(
-                                      color: Colors.grey,
-                                      icon: Icon(Icons.category));
+                                    color: Colors.grey,
+                                    icon: Icon(Icons.category),
+                                  );
                               return PieChartSectionData(
                                 value: income.price,
                                 color: categoryInfo.color,
@@ -73,12 +74,16 @@ class IncomesScreens extends StatelessWidget {
                     final categoryInfo =
                         controller.incomeCategoriesData[income.category] ??
                             CategoryInfo(
-                                color: Colors.grey, icon: Icon(Icons.category));
+                              color: Colors.grey,
+                              icon: Icon(Icons.category),
+                            );
                     return Card(
                       elevation: 5,
                       color: Colors.grey[200],
                       margin: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 15),
+                        vertical: 10,
+                        horizontal: 15,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -93,10 +98,13 @@ class IncomesScreens extends StatelessWidget {
                         ),
                         title: Text(income.source),
                         subtitle: Text(
-                            "${income.category} - ${income.currency} ${income.price.toStringAsFixed(2)}"),
+                          "${income.category} - ${income.currency} ${income.price.toStringAsFixed(2)}",
+                        ),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete,
-                              color: Color(0xFF264653)),
+                          icon: const Icon(
+                            Icons.delete,
+                            color: Color(0xFF264653),
+                          ),
                           onPressed: () => controller.deleteIncome(income.id!),
                         ),
                       ),

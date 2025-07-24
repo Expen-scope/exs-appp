@@ -1,6 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../controller/ExpensesController.dart';
+import '../controller/FinancialController.dart';
+import '../controller/GoalController.dart';
+import '../controller/IncomesController.dart';
+import '../controller/LoginController.dart';
+import '../controller/RegisterController.dart';
+import '../controller/ReminderController.dart';
 import '../controller/user_controller.dart';
 
 class MyCustomSplashScreen extends StatefulWidget {
@@ -10,101 +18,86 @@ class MyCustomSplashScreen extends StatefulWidget {
 
 class _MyCustomSplashScreenState extends State<MyCustomSplashScreen>
     with TickerProviderStateMixin {
-  double _fontSize = 2;
-  double _containerSize = 1.5;
-  double _textOpacity = 0.0;
-  double _containerOpacity = 0.0;
-  late AnimationController _controller;
-  late Animation<double> animation1;
+  late AnimationController _animationController;
+  late Animation<double> _fontSizeAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     );
-    animation1 = Tween<double>(begin: 20.0, end: 40.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeIn,
-      ),
-    );
 
-    _controller.forward();
+    _fontSizeAnimation = Tween<double>(
+      begin: 20.0,
+      end: 40.0,
+    ).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeIn))
+      ..addListener(() {
+        setState(() {});
+      });
 
-    _checkAuthAndNavigate();
+    _animationController.forward();
+
+    _initializeAppAndNavigate();
   }
 
-  Future<void> _checkAuthAndNavigate() async {
-    final UserController userController = Get.find();
-    await userController.initializeUser();
-
+  Future<void> _initializeAppAndNavigate() async {
     await Future.delayed(const Duration(seconds: 3));
 
-    if (userController.isLoggedIn.value) {
+    print("--- Initializing All Controllers ---");
+    Get.put(UserController(), permanent: true);
+    Get.put(IncomesController(), permanent: true);
+    Get.put(ExpencesController(), permanent: true);
+    Get.put(ReminderController(), permanent: true);
+    Get.put(FinancialController(), permanent: true);
+    Get.put(GoalController(), permanent: true);
+    Get.lazyPut(() => LoginController());
+    Get.lazyPut(() => RegisterController());
+    print("--- All Controllers Initialized ---");
+
+    await Get.find<UserController>().tryAutoLogin();
+
+    if (Get.find<UserController>().isLoggedIn.value) {
+      print("User is logged in. Navigating to HomePage.");
       Get.offAllNamed('/HomePage');
     } else {
-      Get.offAllNamed('/Login');
+      print("User is not logged in. Navigating to WelcomeScreen.");
+      Get.offAllNamed('/WelcomeScreen');
     }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double _width = MediaQuery.of(context).size.width;
-    double _height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Color(0xFF006000),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              AnimatedContainer(
-                duration: Duration(milliseconds: 2000),
-                curve: Curves.fastLinearToSlowEaseIn,
-                height: _height / _fontSize,
-              ),
-              AnimatedOpacity(
-                duration: Duration(milliseconds: 1000),
-                opacity: _textOpacity,
-                child: Text(
-                  'ABO NAJIB',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: animation1.value,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Center(
-            child: AnimatedOpacity(
-              duration: Duration(milliseconds: 2000),
-              curve: Curves.fastLinearToSlowEaseIn,
-              opacity: _containerOpacity,
-              child: AnimatedContainer(
-                duration: Duration(milliseconds: 2000),
-                curve: Curves.fastLinearToSlowEaseIn,
-                height: _width / _containerSize,
-                width: _width / _containerSize,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Color(0xFF006000),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Image.asset('assets/Photo/khader (1).png', height: 160),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/Photo/khader (1).png',
+              height: 160,
+            ),
+            const SizedBox(height: 30),
+            Text(
+              'ABO NAJIB',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: _fontSizeAnimation.value,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

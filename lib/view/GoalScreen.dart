@@ -28,10 +28,7 @@ class GoalsScreen extends StatelessWidget {
                 children: [
                   Text(
                     "Start Achieving Your Dreams!",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -55,8 +52,10 @@ class GoalsScreen extends StatelessWidget {
                   key: ValueKey(goal.id),
                   elevation: 5,
                   color: Colors.grey[200],
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 15,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -123,19 +122,23 @@ class GoalsScreen extends StatelessWidget {
                       ],
                     ),
                     trailing: IconButton(
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Color(0xFF006000),
-                      ),
+                      icon: const Icon(Icons.delete, color: Color(0xFF006000)),
                       onPressed: () async {
-                        bool success =
-                            await goalController.deleteGoal(goal.id!);
+                        bool success = await goalController.deleteGoal(
+                          goal.id!,
+                        );
                         if (success) {
-                          Get.snackbar("Success", "Goal deleted successfully",
-                              snackPosition: SnackPosition.BOTTOM);
+                          Get.snackbar(
+                            "Success",
+                            "Goal deleted successfully",
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
                         } else {
-                          Get.snackbar("Error", "Failed to delete goal",
-                              snackPosition: SnackPosition.BOTTOM);
+                          Get.snackbar(
+                            "Error",
+                            "Failed to delete goal",
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
                         }
                       },
                     ),

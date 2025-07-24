@@ -39,23 +39,21 @@ class _SettingState extends State<Setting> {
                       height: width(context) * 0.35,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Color(0xFF006000),
-                          width: 3,
-                        ),
+                        border: Border.all(color: Color(0xFF006000), width: 3),
                       ),
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          Obx(() => CircleAvatar(
-                                radius: width(context) * 0.16,
-                                backgroundImage: controller
-                                            .selectedImage.value !=
-                                        null
-                                    ? FileImage(controller.selectedImage.value!)
-                                        as ImageProvider
-                                    : const AssetImage('assets/Photo/me.jpg'),
-                              )),
+                          Obx(
+                            () => CircleAvatar(
+                              radius: width(context) * 0.16,
+                              backgroundImage: controller.selectedImage.value !=
+                                      null
+                                  ? FileImage(controller.selectedImage.value!)
+                                      as ImageProvider
+                                  : const AssetImage('assets/Photo/me.jpg'),
+                            ),
+                          ),
                           Positioned(
                             bottom: 0,
                             right: 0,
@@ -69,7 +67,7 @@ class _SettingState extends State<Setting> {
                                     color: Colors.grey.withOpacity(0.3),
                                     spreadRadius: 2,
                                     blurRadius: 5,
-                                  )
+                                  ),
                                 ],
                               ),
                               child: const Icon(
@@ -96,17 +94,18 @@ class _SettingState extends State<Setting> {
                               elevation: 5,
                             ),
                             onPressed: () async {
-                              await controller.updateProfileImage(
-                                  controller.selectedImage.value!.path);
-                              Get.snackbar('Success',
-                                  'Profile image updated successfully');
+                              Get.snackbar(
+                                'Success',
+                                'Profile image updated successfully',
+                              );
                             },
                             child: Text(
                               'Change your photo',
                               style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           )
                         : SizedBox.shrink();
@@ -119,7 +118,8 @@ class _SettingState extends State<Setting> {
               color: Colors.grey[200],
               elevation: 4,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
+                borderRadius: BorderRadius.circular(15),
+              ),
               child: Padding(
                 padding: EdgeInsets.all(hight(context) * 0.02),
                 child: Column(
@@ -172,14 +172,20 @@ class _SettingState extends State<Setting> {
                           if (_oldPasswordController.text.isEmpty ||
                               _newPasswordController.text.isEmpty ||
                               _confirmPasswordController.text.isEmpty) {
-                            Get.snackbar('Error', 'Please fill all fields',
-                                snackPosition: SnackPosition.BOTTOM);
+                            Get.snackbar(
+                              'Error',
+                              'Please fill all fields',
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
                             return;
                           }
                           if (_newPasswordController.text !=
                               _confirmPasswordController.text) {
-                            Get.snackbar('Error', 'Passwords do not match',
-                                snackPosition: SnackPosition.BOTTOM);
+                            Get.snackbar(
+                              'Error',
+                              'Passwords do not match',
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
                             return;
                           }
                           await controller.changePassword(
@@ -190,9 +196,10 @@ class _SettingState extends State<Setting> {
                         child: Text(
                           'Update',
                           style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -219,22 +226,17 @@ class _SettingState extends State<Setting> {
       keyboardType: TextInputType.visiblePassword,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(
-          color: Color(0xFF006000),
-        ),
-        prefixIcon: Icon(
-          icon,
-          color: const Color(0xFF006000),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        labelStyle: TextStyle(color: Color(0xFF006000)),
+        prefixIcon: Icon(icon, color: const Color(0xFF006000)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Color(0xFF006000), width: 2),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 15,
+          horizontal: 20,
+        ),
       ),
     );
   }

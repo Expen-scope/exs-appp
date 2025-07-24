@@ -90,9 +90,7 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
               onSurface: Colors.black,
             ),
             textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Color(0xFF507da0),
-              ),
+              style: TextButton.styleFrom(foregroundColor: Color(0xFF507da0)),
             ),
           ),
           child: child!,
@@ -123,16 +121,15 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: Theme.of(context).copyWith(
-              colorScheme: ColorScheme.light(
-                primary: Color(0xFF507da0),
-                onPrimary: Colors.white,
-                onSurface: Colors.black,
-              ),
-              textButtonTheme: TextButtonThemeData(
-                style: TextButton.styleFrom(
-                  foregroundColor: Color(0xFF507da0),
-                ),
-              )),
+            colorScheme: ColorScheme.light(
+              primary: Color(0xFF507da0),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(foregroundColor: Color(0xFF507da0)),
+            ),
+          ),
           child: child!,
         );
       },
@@ -154,21 +151,26 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
               SizedBox(height: hight(context) * 0.025),
               Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: hight(Get.context!) * .007),
+                  horizontal: hight(Get.context!) * .007,
+                ),
                 child: TextField(
                   cursorColor: Color(0xFF264653),
                   controller: nameController,
                   decoration: InputDecoration(
                     labelText: "Goal Name",
-                    labelStyle:
-                        TextStyle(color: Color(0xFF264653), fontSize: 16),
+                    labelStyle: TextStyle(
+                      color: Color(0xFF264653),
+                      fontSize: 16,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          BorderSide(color: Color(0xFF264653), width: 2),
+                      borderSide: BorderSide(
+                        color: Color(0xFF264653),
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
@@ -176,22 +178,27 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
               SizedBox(height: hight(context) * 0.024),
               Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: hight(Get.context!) * .007),
+                  horizontal: hight(Get.context!) * .007,
+                ),
                 child: TextField(
                   cursorColor: Color(0xFF264653),
                   controller: priceController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: "Target Amount",
-                    labelStyle:
-                        TextStyle(color: Color(0xFF264653), fontSize: 16),
+                    labelStyle: TextStyle(
+                      color: Color(0xFF264653),
+                      fontSize: 16,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          BorderSide(color: Color(0xFF264653), width: 2),
+                      borderSide: BorderSide(
+                        color: Color(0xFF264653),
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
@@ -199,22 +206,27 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
               SizedBox(height: hight(context) * 0.024),
               Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: hight(Get.context!) * .007),
+                  horizontal: hight(Get.context!) * .007,
+                ),
                 child: TextField(
                   cursorColor: Color(0xFF264653),
                   controller: collectedController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: "Amount collected",
-                    labelStyle:
-                        TextStyle(color: Color(0xFF264653), fontSize: 16),
+                    labelStyle: TextStyle(
+                      color: Color(0xFF264653),
+                      fontSize: 16,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          BorderSide(color: Color(0xFF264653), width: 2),
+                      borderSide: BorderSide(
+                        color: Color(0xFF264653),
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
@@ -222,7 +234,8 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
               SizedBox(height: hight(context) * 0.024),
               Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: hight(Get.context!) * .007),
+                  horizontal: hight(Get.context!) * .007,
+                ),
                 child: DropdownButtonFormField<String>(
                   value: selectedCategory,
                   dropdownColor: Colors.white,
@@ -236,16 +249,20 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                       setState(() => selectedCategory = value!),
                   decoration: InputDecoration(
                     labelText: "Category",
-                    labelStyle:
-                        TextStyle(color: Color(0xFF264653), fontSize: 16),
+                    labelStyle: TextStyle(
+                      color: Color(0xFF264653),
+                      fontSize: 16,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide(color: Colors.black, width: 1.5),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          BorderSide(color: Color(0xFF264653), width: 2),
+                      borderSide: BorderSide(
+                        color: Color(0xFF264653),
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
@@ -264,15 +281,19 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 4.0, vertical: 8),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 4.0,
+                          vertical: 8,
+                        ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
                               "Time: ${selectedTime != null ? selectedTime!.format(context) : ''}",
                               style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             SizedBox(width: 8),
                             Icon(Icons.calendar_today, color: Colors.blue),
@@ -291,8 +312,10 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 3.0, vertical: 8),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 3.0,
+                          vertical: 8,
+                        ),
                         child: Row(
                           children: [
                             Text(
@@ -300,7 +323,9 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                                   ? "Select Deadline"
                                   : "Deadline: ${selectedDate!.toLocal().toString().split(' ')[0]}",
                               style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             SizedBox(width: 8),
                             Icon(Icons.access_time, color: Colors.green),

@@ -17,8 +17,9 @@ class AddExpences extends StatefulWidget {
 class _AddExpencesState extends State<AddExpences> {
   final TextEditingController sourceController = TextEditingController();
   final TextEditingController valueController = TextEditingController();
-  final TextEditingController currencyController =
-      TextEditingController(text: 'USD');
+  final TextEditingController currencyController = TextEditingController(
+    text: 'USD',
+  );
   final TextEditingController descriptionController = TextEditingController();
 
   final RxnString selectedCategory = RxnString(null);
@@ -55,8 +56,10 @@ class _AddExpencesState extends State<AddExpences> {
     final TextEditingController newCategoryController = TextEditingController();
     Get.defaultDialog(
       title: "Add New Category",
-      titleStyle:
-          TextStyle(color: Color(0xFF006000), fontWeight: FontWeight.bold),
+      titleStyle: TextStyle(
+        color: Color(0xFF006000),
+        fontWeight: FontWeight.bold,
+      ),
       content: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: TextField(
@@ -129,31 +132,40 @@ class _AddExpencesState extends State<AddExpences> {
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.04),
             _buildTextField(
-                controller: sourceController, label: "Expense Source"),
+              controller: sourceController,
+              label: "Expense Source",
+            ),
             _buildTextField(
-                controller: valueController,
-                label: "Amount",
-                keyboardType: TextInputType.number),
+              controller: valueController,
+              label: "Amount",
+              keyboardType: TextInputType.number,
+            ),
             _buildTextField(controller: currencyController, label: "Currency "),
             _buildTextField(
-                controller: descriptionController, label: "Description"),
+              controller: descriptionController,
+              label: "Description",
+            ),
             Padding(
               padding: EdgeInsets.symmetric(
-                  vertical: MediaQuery.of(context).size.height * 0.01),
+                vertical: MediaQuery.of(context).size.height * 0.01,
+              ),
               child: Obx(() {
                 if (controller.expenseCategories.isEmpty) {
                   return const Center(
-                      child:
-                          CircularProgressIndicator(color: Color(0xFF006000)));
+                    child: CircularProgressIndicator(color: Color(0xFF006000)),
+                  );
                 } else {
-                  final currentSelection = controller.expenseCategories
-                          .contains(selectedCategory.value)
-                      ? selectedCategory.value
-                      : controller.expenseCategories.first;
+                  final currentSelection =
+                      controller.expenseCategories.contains(
+                    selectedCategory.value,
+                  )
+                          ? selectedCategory.value
+                          : controller.expenseCategories.first;
 
                   return Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: hight(Get.context!) * .007),
+                      horizontal: hight(Get.context!) * .007,
+                    ),
                     child: DropdownButtonFormField<String>(
                       dropdownColor: Color(0xFFF8FCF8),
                       value: currentSelection,
@@ -161,14 +173,17 @@ class _AddExpencesState extends State<AddExpences> {
                         final categoryInfo =
                             controller.expenseCategoriesData[category] ??
                                 CategoryInfo(
-                                    color: Colors.grey,
-                                    icon: Icon(Icons.category));
+                                  color: Colors.grey,
+                                  icon: Icon(Icons.category),
+                                );
                         return DropdownMenuItem<String>(
                           value: category,
                           child: Row(
                             children: [
-                              Icon(categoryInfo.icon.icon,
-                                  color: categoryInfo.color),
+                              Icon(
+                                categoryInfo.icon.icon,
+                                color: categoryInfo.color,
+                              ),
                               const SizedBox(width: 8),
                               Text(category),
                             ],
@@ -183,7 +198,8 @@ class _AddExpencesState extends State<AddExpences> {
                       decoration: InputDecoration(
                         labelText: "Select Category",
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   );
@@ -195,8 +211,10 @@ class _AddExpencesState extends State<AddExpences> {
               child: TextButton.icon(
                 onPressed: _showAddCategoryDialog,
                 icon: const Icon(Icons.add, color: Color(0xFF006000)),
-                label: const Text("Add New Category",
-                    style: TextStyle(color: Color(0xFF006000))),
+                label: const Text(
+                  "Add New Category",
+                  style: TextStyle(color: Color(0xFF006000)),
+                ),
               ),
             ),
             SizedBox(height: 24),
@@ -211,8 +229,9 @@ class _AddExpencesState extends State<AddExpences> {
                     valueController.text.isNotEmpty &&
                     currencyController.text.isNotEmpty &&
                     selectedCategory.value != null) {
-                  final String formattedDate =
-                      DateFormat('yyyy-MM-dd').format(DateTime.now());
+                  final String formattedDate = DateFormat(
+                    'yyyy-MM-dd',
+                  ).format(DateTime.now());
 
                   final newExpense = Expense(
                     source: sourceController.text,
@@ -238,14 +257,16 @@ class _AddExpencesState extends State<AddExpences> {
                 minimumSize: const Size.fromHeight(50),
                 backgroundColor: const Color(0xFF006000),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: const Text(
                 "Add Expense",
                 style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold),
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],

@@ -42,8 +42,9 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
       importance: Importance.max,
       priority: Priority.high,
     );
-    const NotificationDetails platformDetails =
-        NotificationDetails(android: androidDetails);
+    const NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+    );
     await _notificationsPlugin.show(0, title, body, platformDetails);
   }
 
@@ -60,21 +61,27 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
       final remaining = widget.goal.price! - widget.goal.collectedmoney!;
 
       if (newTotal > widget.goal.price!) {
-        Get.snackbar("Error",
-            "The entered amount exceeds the remaining amount ($remaining)");
+        Get.snackbar(
+          "Error",
+          "The entered amount exceeds the remaining amount ($remaining)",
+        );
         return;
       }
 
       final updatedGoal = widget.goal.copyWith(collectedmoney: newTotal);
 
-      final success =
-          await goalController.updateGoal(widget.goal.id!, updatedGoal);
+      final success = await goalController.updateGoal(
+        widget.goal.id!,
+        updatedGoal,
+      );
 
       if (success) {
         _amountController.clear();
         if (newTotal >= widget.goal.price!) {
-          await _showNotification("Goal Completed!",
-              "Congratulations! You have achieved your goal!${widget.goal.name}");
+          await _showNotification(
+            "Goal Completed!",
+            "Congratulations! You have achieved your goal!${widget.goal.name}",
+          );
         }
         Get.back();
         Get.until((route) => Get.currentRoute == '/Goals');
@@ -120,9 +127,10 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
               title: "${(progress * 100).toStringAsFixed(1)}%",
               radius: 60,
               titleStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             PieChartSectionData(
               value: (1 - progress) * 100,
@@ -142,9 +150,10 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
       child: Text(
         "saver: ${saved.toStringAsFixed(2)} / ${total.toStringAsFixed(2)}",
         style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF2e495e)),
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF2e495e),
+        ),
       ),
     );
   }
@@ -157,8 +166,9 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
         labelText: "Added amount (remaining:${remaining.toStringAsFixed(2)})",
         labelStyle: TextStyle(color: Color(0xFF264653), fontSize: 16),
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFF2e495e))),
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFF2e495e)),
+        ),
         prefixIcon: Icon(Icons.attach_money, color: Color(0xFF2e495e)),
         suffixIcon: IconButton(
           icon: const Icon(Icons.clear),
@@ -185,13 +195,17 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
           label: const Text(
             "Update",
             style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: Color(0xFF006000),
             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         ),
       ),

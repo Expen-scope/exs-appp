@@ -16,8 +16,9 @@ class AddIncomes extends StatefulWidget {
 class _AddIncomesState extends State<AddIncomes> {
   final TextEditingController sourceController = TextEditingController();
   final TextEditingController valueController = TextEditingController();
-  final TextEditingController currencyController =
-      TextEditingController(text: 'USD');
+  final TextEditingController currencyController = TextEditingController(
+    text: 'USD',
+  );
   final TextEditingController descriptionController = TextEditingController();
   final RxnString selectedCategory = RxnString(null);
   final IncomesController controller = Get.find<IncomesController>();
@@ -52,7 +53,9 @@ class _AddIncomesState extends State<AddIncomes> {
     Get.defaultDialog(
       title: "Add New Category",
       titleStyle: const TextStyle(
-          color: Color(0xFF006000), fontWeight: FontWeight.bold),
+        color: Color(0xFF006000),
+        fontWeight: FontWeight.bold,
+      ),
       content: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: TextField(
@@ -65,8 +68,9 @@ class _AddIncomesState extends State<AddIncomes> {
         ),
       ),
       confirm: ElevatedButton(
-        style:
-            ElevatedButton.styleFrom(backgroundColor: const Color(0xFF006000)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF006000),
+        ),
         onPressed: () {
           String newCategory = newCategoryController.text.trim();
           if (newCategory.isNotEmpty &&
@@ -85,15 +89,17 @@ class _AddIncomesState extends State<AddIncomes> {
         child: const Text("Add", style: TextStyle(color: Colors.white)),
       ),
       cancel: TextButton(
-          onPressed: () => Get.back(),
-          child: const Text("Cancel", style: TextStyle(color: Colors.grey))),
+        onPressed: () => Get.back(),
+        child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
+      ),
     );
   }
 
-  Widget _buildTextField(
-      {required TextEditingController controller,
-      required String label,
-      TextInputType keyboardType = TextInputType.text}) {
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
@@ -124,22 +130,26 @@ class _AddIncomesState extends State<AddIncomes> {
           children: [
             const SizedBox(height: 16),
             _buildTextField(
-                controller: sourceController, label: "Income Source"),
+              controller: sourceController,
+              label: "Income Source",
+            ),
             _buildTextField(
-                controller: valueController,
-                label: "Amount",
-                keyboardType: TextInputType.number),
+              controller: valueController,
+              label: "Amount",
+              keyboardType: TextInputType.number,
+            ),
             _buildTextField(controller: currencyController, label: "Currency"),
             _buildTextField(
-                controller: descriptionController,
-                label: "Description (Optional)"),
+              controller: descriptionController,
+              label: "Description (Optional)",
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Obx(() {
                 if (controller.incomeCategories.isEmpty) {
                   return const Center(
-                      child:
-                          CircularProgressIndicator(color: Color(0xFF006000)));
+                    child: CircularProgressIndicator(color: Color(0xFF006000)),
+                  );
                 }
                 final currentSelection =
                     controller.incomeCategories.contains(selectedCategory.value)
@@ -147,22 +157,26 @@ class _AddIncomesState extends State<AddIncomes> {
                         : controller.incomeCategories.first;
                 return Padding(
                   padding: EdgeInsets.symmetric(
-                      horizontal: hight(Get.context!) * .007),
+                    horizontal: hight(Get.context!) * .007,
+                  ),
                   child: DropdownButtonFormField<String>(
                     value: currentSelection,
                     items: controller.incomeCategories.map((category) {
                       final categoryInfo =
                           controller.incomeCategoriesData[category] ??
                               CategoryInfo(
-                                  color: Colors.grey,
-                                  icon: Icon(Icons.category));
+                                color: Colors.grey,
+                                icon: Icon(Icons.category),
+                              );
 
                       return DropdownMenuItem<String>(
                         value: category,
                         child: Row(
                           children: [
-                            Icon(categoryInfo.icon.icon,
-                                color: categoryInfo.color),
+                            Icon(
+                              categoryInfo.icon.icon,
+                              color: categoryInfo.color,
+                            ),
                             const SizedBox(width: 8),
                             Text(category),
                           ],
@@ -177,7 +191,8 @@ class _AddIncomesState extends State<AddIncomes> {
                     decoration: InputDecoration(
                       labelText: "Select Category",
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 );
@@ -188,8 +203,10 @@ class _AddIncomesState extends State<AddIncomes> {
               child: TextButton.icon(
                 onPressed: _showAddCategoryDialog,
                 icon: const Icon(Icons.add, color: Color(0xFF006000)),
-                label: const Text("Add New Category",
-                    style: TextStyle(color: Color(0xFF006000))),
+                label: const Text(
+                  "Add New Category",
+                  style: TextStyle(color: Color(0xFF006000)),
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -216,21 +233,27 @@ class _AddIncomesState extends State<AddIncomes> {
                   controller.addIncome(newIncome);
                 } else {
                   Get.snackbar(
-                      "Input Error", "Please fill all required fields.",
-                      snackPosition: SnackPosition.BOTTOM);
+                    "Input Error",
+                    "Please fill all required fields.",
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
                 }
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
                 backgroundColor: const Color(0xFF006000),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-              child: const Text("Add Income",
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold)),
+              child: const Text(
+                "Add Income",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
