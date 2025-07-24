@@ -12,15 +12,21 @@ class conclickclass extends StatelessWidget {
       onTap: ontap,
       child: Container(
         decoration: BoxDecoration(
-            color: kPrimarycolor, borderRadius: BorderRadius.circular(8)),
+          color: kPrimarycolor,
+          borderRadius: BorderRadius.circular(8),
+        ),
         width: double.infinity,
         height: hight(context) * .06,
         child: Center(
-            child: Text(
-          Texts,
-          style: TextStyle(
-              fontSize: 22, color: Color(0xFF507da0), fontFamily: kboldTajwal),
-        )),
+          child: Text(
+            Texts,
+            style: TextStyle(
+              fontSize: 22,
+              color: Color(0xFF507da0),
+              fontFamily: kboldTajwal,
+            ),
+          ),
+        ),
       ),
     );
   }

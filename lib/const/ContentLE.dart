@@ -90,10 +90,7 @@ class ContentLE extends StatelessWidget {
                 color: Colors.red.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: IconButton(
-                icon: icondelete,
-                onPressed: onpres,
-              ),
+              child: IconButton(icon: icondelete, onPressed: onpres),
             ),
           ],
         ),

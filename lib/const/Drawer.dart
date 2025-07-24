@@ -13,31 +13,25 @@ Widget CustomDrawer(BuildContext context) {
   return Drawer(
     child: Column(
       children: [
-        Obx(() => UserAccountsDrawerHeader(
-              accountName: Text(
-                controller.user.value?.name ?? 'Guest',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              accountEmail: Text(
-                controller.user.value?.email ?? 'No email',
-                style: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-              currentAccountPicture: CircleAvatar(
-                radius: width(context) * 0.16,
-                backgroundImage: controller.selectedImage.value != null
-                    ? FileImage(controller.selectedImage.value!)
-                        as ImageProvider
-                    : const AssetImage('assets/Photo/me.jpg'),
-              ),
-              decoration: BoxDecoration(
-                color: Color(0xFF06402B),
-              ),
-            )),
+        Obx(
+          () => UserAccountsDrawerHeader(
+            accountName: Text(
+              controller.user.value?.name ?? 'Guest',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            accountEmail: Text(
+              controller.user.value?.email ?? 'No email',
+              style: const TextStyle(fontSize: 14),
+            ),
+            currentAccountPicture: CircleAvatar(
+              radius: width(context) * 0.16,
+              backgroundImage: controller.selectedImage.value != null
+                  ? FileImage(controller.selectedImage.value!) as ImageProvider
+                  : const AssetImage('assets/Photo/me.jpg'),
+            ),
+            decoration: BoxDecoration(color: Color(0xFF06402B)),
+          ),
+        ),
         Expanded(
           child: ListView(
             padding: EdgeInsets.zero,
@@ -126,10 +120,7 @@ void _showLogoutDialog(BuildContext context) {
           onPressed: () async {
             Get.toNamed("/Login");
           },
-          child: const Text(
-            'Log Out',
-            style: TextStyle(color: Colors.red),
-          ),
+          child: const Text('Log Out', style: TextStyle(color: Colors.red)),
         ),
       ],
     ),

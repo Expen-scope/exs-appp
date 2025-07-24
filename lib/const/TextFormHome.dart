@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 class TextFormFieldClass extends StatelessWidget {
-  TextFormFieldClass(
-      {super.key,
-      this.obscureTe = false,
-      required this.hinttext,
-      this.onchange,
-      this.suffixIcon,
-      this.errorText});
+  TextFormFieldClass({
+    super.key,
+    this.obscureTe = false,
+    required this.hinttext,
+    this.onchange,
+    this.suffixIcon,
+    this.errorText,
+  });
 
   String hinttext;
   bool? obscureTe;
@@ -37,11 +38,13 @@ class TextFormFieldClass extends StatelessWidget {
           fontSize: 16,
         ),
         enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.blue.shade900)),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.blue.shade900),
+        ),
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.blue.shade900)),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.blue.shade900),
+        ),
         suffixIcon: suffixIcon,
         errorText: errorText,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
