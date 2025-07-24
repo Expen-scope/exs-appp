@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:ui';
-import 'package:googleapis/calendar/v3.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -71,8 +70,9 @@ class GoalController extends GetxController {
       );
 
       if (response.statusCode == 201) {
-        final newReminder =
-            GoalModel.fromJson(json.decode(response.body)['data']);
+        final newReminder = GoalModel.fromJson(
+          json.decode(response.body)['data'],
+        );
         goals.insert(0, newReminder);
         update();
         return true;

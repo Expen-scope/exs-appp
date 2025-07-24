@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as Dio;
 
@@ -20,19 +19,24 @@ class RegisterController extends GetxController {
   void togglePasswordVisibility() => isPasswordVisible.toggle();
   void toggleConfirmPasswordVisibility() => isConfirmPasswordVisible.toggle();
 
-  final Dio.Dio dio = Dio.Dio(Dio.BaseOptions(
-    baseUrl: 'http://10.0.2.2:8000/api',
-    contentType: Dio.Headers.jsonContentType,
-    validateStatus: (status) => status! < 500,
-  ));
+  final Dio.Dio dio = Dio.Dio(
+    Dio.BaseOptions(
+      baseUrl: 'https://496f8c5ee7fb.ngrok-free.app/api',
+      // baseUrl: "http://10.0.2.2:8000/api",
+
+      contentType: Dio.Headers.jsonContentType,
+      validateStatus: (status) => status! < 500,
+    ),
+  );
 
   void validateInputs() {
     nameError.value = name.value.isEmpty ? "You must enter the name" : null;
 
     if (email.value.isEmpty) {
       emailError.value = "You must enter an email";
-    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-        .hasMatch(email.value)) {
+    } else if (!RegExp(
+      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+    ).hasMatch(email.value)) {
       emailError.value = "Invalid email format";
     } else {
       emailError.value = null;
@@ -93,7 +97,8 @@ class RegisterController extends GetxController {
       } on Dio.DioException catch (e) {
         print('🚨 Dio Error: ${e.message}');
         showErrorDialog(
-            "Connection error: ${e.message ?? 'An unknown error has occurred'}");
+          "Connection error: ${e.message ?? 'An unknown error has occurred'}",
+        );
       } on FormatException catch (e) {
         print('❌ Format Error: $e');
         showErrorDialog("Data format error: ${e.message}");

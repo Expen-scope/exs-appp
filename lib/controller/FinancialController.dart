@@ -95,12 +95,14 @@ class FinancialController extends GetxController {
   void _setupDataListeners() {
     ever(incomesController.incomes, (_) {
       print(
-          "FinancialController: Detected change in INCOMES. Reloading data...");
+        "FinancialController: Detected change in INCOMES. Reloading data...",
+      );
       loadData();
     });
     ever(expensesController.listExpenses, (_) {
       print(
-          "FinancialController: Detected change in EXPENSES. Reloading data...");
+        "FinancialController: Detected change in EXPENSES. Reloading data...",
+      );
       loadData();
     });
   }
@@ -116,9 +118,7 @@ class FinancialController extends GetxController {
       await Future.delayed(Duration.zero);
       _processData();
     } catch (e) {
-      errorMessage.value = 'Failed to process data: $e';
       print('ERROR in FinancialController -> loadData: $e');
-      Get.snackbar('Error', errorMessage.value);
     } finally {
       isLoading.value = false;
     }
@@ -174,13 +174,18 @@ class FinancialController extends GetxController {
 
   void _calculateTotals() {
     final filteredIncomes = _filterByDateRange(incomesController.incomes);
-    final filteredExpenses =
-        _filterByDateRange(expensesController.listExpenses);
+    final filteredExpenses = _filterByDateRange(
+      expensesController.listExpenses,
+    );
 
-    totalIncome.value =
-        filteredIncomes.fold(0.0, (sum, income) => sum + income.price);
-    totalExpenses.value =
-        filteredExpenses.fold(0.0, (sum, expense) => sum + expense.price);
+    totalIncome.value = filteredIncomes.fold(
+      0.0,
+      (sum, income) => sum + income.price,
+    );
+    totalExpenses.value = filteredExpenses.fold(
+      0.0,
+      (sum, expense) => sum + expense.price,
+    );
   }
 
   void _calculateBalance() {
@@ -189,8 +194,9 @@ class FinancialController extends GetxController {
 
   void _processTransactions() {
     final filteredIncomes = _filterByDateRange(incomesController.incomes);
-    final filteredExpenses =
-        _filterByDateRange(expensesController.listExpenses);
+    final filteredExpenses = _filterByDateRange(
+      expensesController.listExpenses,
+    );
 
     final combined = [
       ...filteredIncomes.map((income) => _incomeToTransaction(income)),
@@ -213,19 +219,25 @@ class FinancialController extends GetxController {
   void _processCategoryAnalysis() {
     final categoryMap = <String, double>{};
     final filteredIncomes = _filterByDateRange(incomesController.incomes);
-    final filteredExpenses =
-        _filterByDateRange(expensesController.listExpenses);
+    final filteredExpenses = _filterByDateRange(
+      expensesController.listExpenses,
+    );
     final incomeCategoryMap = <String, double>{};
     final expenseCategoryMap = <String, double>{};
 
     for (final income in filteredIncomes) {
-      incomeCategoryMap.update(income.category, (value) => value + income.price,
-          ifAbsent: () => income.price);
+      incomeCategoryMap.update(
+        income.category,
+        (value) => value + income.price,
+        ifAbsent: () => income.price,
+      );
     }
     for (final expense in filteredExpenses) {
       expenseCategoryMap.update(
-          expense.category, (value) => value + expense.price,
-          ifAbsent: () => expense.price);
+        expense.category,
+        (value) => value + expense.price,
+        ifAbsent: () => expense.price,
+      );
     }
 
     final combinedCategories = <Map<String, dynamic>>[];
@@ -280,7 +292,9 @@ class FinancialController extends GetxController {
     final prevMonthEnd = DateTime(now.year, now.month, 0, 23, 59, 59);
 
     double parseAndSum<T>(
-        List<T> list, bool Function(DateTime) filterCondition) {
+      List<T> list,
+      bool Function(DateTime) filterCondition,
+    ) {
       return list.fold(0.0, (sum, item) {
         try {
           String dateString =
@@ -299,13 +313,13 @@ class FinancialController extends GetxController {
     }
 
     final prevMonthIncomes = parseAndSum(
-        incomesController.incomes,
-        (date) =>
-            !date.isBefore(prevMonthStart) && !date.isAfter(prevMonthEnd));
+      incomesController.incomes,
+      (date) => !date.isBefore(prevMonthStart) && !date.isAfter(prevMonthEnd),
+    );
     final prevMonthExpenses = parseAndSum(
-        expensesController.listExpenses,
-        (date) =>
-            !date.isBefore(prevMonthStart) && !date.isAfter(prevMonthEnd));
+      expensesController.listExpenses,
+      (date) => !date.isBefore(prevMonthStart) && !date.isAfter(prevMonthEnd),
+    );
 
     incomePercentageChange.value = (prevMonthIncomes > 0)
         ? ((totalIncome.value - prevMonthIncomes) / prevMonthIncomes) * 100
@@ -320,8 +334,9 @@ class FinancialController extends GetxController {
     final periodMap = <String, Map<String, double>>{};
 
     final filteredIncomes = _filterByDateRange(incomesController.incomes);
-    final filteredExpenses =
-        _filterByDateRange(expensesController.listExpenses);
+    final filteredExpenses = _filterByDateRange(
+      expensesController.listExpenses,
+    );
 
     String groupByKey(DateTime date) {
       const locale = 'en_US';
@@ -337,7 +352,7 @@ class FinancialController extends GetxController {
 
     final List<dynamic> combinedList = [
       ...filteredIncomes,
-      ...filteredExpenses
+      ...filteredExpenses,
     ];
 
     for (final item in combinedList) {
@@ -383,8 +398,10 @@ class FinancialController extends GetxController {
       try {
         if (selectedPeriod.value == 'week') {
           final dateString = entry.key.split(' ').last;
-          sortDate = DateFormat('dd/MM/yyyy', locale)
-              .parse('$dateString/${DateTime.now().year}');
+          sortDate = DateFormat(
+            'dd/MM/yyyy',
+            locale,
+          ).parse('$dateString/${DateTime.now().year}');
         } else if (selectedPeriod.value == 'month') {
           sortDate = DateFormat('MMM yyyy', locale).parse(entry.key);
         } else {
@@ -463,8 +480,11 @@ class FinancialController extends GetxController {
     DateTime end;
     switch (period) {
       case 'week':
-        start = DateTime(now.year, now.month, now.day)
-            .subtract(Duration(days: now.weekday - 1));
+        start = DateTime(
+          now.year,
+          now.month,
+          now.day,
+        ).subtract(Duration(days: now.weekday - 1));
         end = start.add(Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
         break;
       case 'month':

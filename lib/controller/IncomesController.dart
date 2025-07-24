@@ -10,7 +10,9 @@ class IncomesController extends GetxController {
   var incomeCategories = <String>[].obs;
   var isDataLoading = false.obs;
 
-  final String baseUrl = "http://10.0.2.2:8000/api";
+  final String baseUrl = "https://496f8c5ee7fb.ngrok-free.app/api";
+  // final String baseUrl = "http://10.0.2.2:8000/api";
+
   final _storage = const FlutterSecureStorage();
   String? authToken;
 
@@ -24,30 +26,39 @@ class IncomesController extends GetxController {
     'Interest Income',
     'Gifts',
     'Refunds/Reimbursements',
-    'Bonuses'
+    'Bonuses',
   ];
   final Map<String, CategoryInfo> incomeCategoriesData = {
-    'Salary': CategoryInfo(
-      color: Colors.green,
-      icon: Icon(Icons.attach_money),
-    ),
+    'Salary': CategoryInfo(color: Colors.green, icon: Icon(Icons.attach_money)),
     'Business Income': CategoryInfo(
       color: Colors.blue,
       icon: Icon(Icons.business_center),
     ),
-    'Freelance/Side Hustles':
-        CategoryInfo(color: Colors.orange, icon: Icon(Icons.work_outline)),
-    'Investments':
-        CategoryInfo(color: Colors.purple, icon: Icon(Icons.show_chart)),
-    'Rental Income':
-        CategoryInfo(color: Colors.teal, icon: Icon(Icons.home_work)),
-    'Dividends':
-        CategoryInfo(color: Colors.indigo, icon: Icon(Icons.pie_chart)),
-    'Interest Income':
-        CategoryInfo(color: Colors.brown, icon: Icon(Icons.account_balance)),
+    'Freelance/Side Hustles': CategoryInfo(
+      color: Colors.orange,
+      icon: Icon(Icons.work_outline),
+    ),
+    'Investments': CategoryInfo(
+      color: Colors.purple,
+      icon: Icon(Icons.show_chart),
+    ),
+    'Rental Income': CategoryInfo(
+      color: Colors.teal,
+      icon: Icon(Icons.home_work),
+    ),
+    'Dividends': CategoryInfo(
+      color: Colors.indigo,
+      icon: Icon(Icons.pie_chart),
+    ),
+    'Interest Income': CategoryInfo(
+      color: Colors.brown,
+      icon: Icon(Icons.account_balance),
+    ),
     'Gifts': CategoryInfo(color: Colors.pink, icon: Icon(Icons.card_giftcard)),
-    'Refunds/Reimbursements':
-        CategoryInfo(color: Colors.cyan, icon: Icon(Icons.reply)),
+    'Refunds/Reimbursements': CategoryInfo(
+      color: Colors.cyan,
+      icon: Icon(Icons.reply),
+    ),
     'Bonuses': CategoryInfo(color: Colors.red, icon: Icon(Icons.star)),
   };
 
@@ -55,7 +66,10 @@ class IncomesController extends GetxController {
   void onInit() {
     super.onInit();
     incomeCategories.assignAll(_defaultIncomeCategories);
-    _loadTokenAndFetchData();
+  }
+
+  Future<String?> _getAuthToken() async {
+    return await _storage.read(key: 'access_token');
   }
 
   Future<void> reloadDataAfterLogin() async {
@@ -79,10 +93,12 @@ class IncomesController extends GetxController {
       final headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer $authToken'
+        'Authorization': 'Bearer $authToken',
       };
-      final response =
-          await http.get(Uri.parse('$baseUrl/categories'), headers: headers);
+      final response = await http.get(
+        Uri.parse('$baseUrl/categories'),
+        headers: headers,
+      );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final customCategories = List<String>.from(data['income_categories']);
@@ -90,7 +106,8 @@ class IncomesController extends GetxController {
         incomeCategories.assignAll(combinedSet.toList());
       } else {
         print(
-            "Failed to load categories, using defaults. Status: ${response.statusCode}");
+          "Failed to load categories, using defaults. Status: ${response.statusCode}",
+        );
         incomeCategories.assignAll(_defaultIncomeCategories);
       }
     } catch (e) {
@@ -100,16 +117,25 @@ class IncomesController extends GetxController {
   }
 
   Future<void> fetchIncomes() async {
-    if (authToken == null) return;
     isDataLoading.value = true;
+    final token = await _getAuthToken();
+    if (token == null) {
+      print("[IncomesCtrl] Auth token not found. Cannot fetch data.");
+      isDataLoading.value = false;
+      return;
+    }
+
     try {
       final headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer $authToken'
+        'Authorization': 'Bearer $token',
       };
-      final response = await http.get(Uri.parse('$baseUrl/user/transactions'),
-          headers: headers);
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/user/transactions'),
+        headers: headers,
+      );
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final List dataList =
@@ -117,6 +143,7 @@ class IncomesController extends GetxController {
         final incomeData =
             dataList.where((e) => e['type_transaction'] == 'income').toList();
         incomes.value = incomeData.map((e) => Income.fromJson(e)).toList();
+        print("✅ Incomes fetched successfully.");
       } else {
         Get.snackbar(
             'Error Fetching Incomes', 'Status: ${response.statusCode}');
@@ -129,7 +156,8 @@ class IncomesController extends GetxController {
   }
 
   Future<void> addIncome(Income income) async {
-    if (authToken == null) {
+    final token = await _getAuthToken();
+    if (token == null) {
       Get.snackbar("Authentication Error", "Please log in again.");
       return;
     }
@@ -137,7 +165,7 @@ class IncomesController extends GetxController {
       final headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer $authToken'
+        'Authorization': 'Bearer $token',
       };
       final response = await http.post(
         Uri.parse('$baseUrl/user/transactions'),
@@ -162,16 +190,18 @@ class IncomesController extends GetxController {
   }
 
   Future<void> deleteIncome(int id) async {
-    if (authToken == null) return;
+    final token = await _getAuthToken();
+    if (token == null) return;
     try {
       final headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer $authToken'
+        'Authorization': 'Bearer $token',
       };
       final response = await http.delete(
-          Uri.parse('$baseUrl/user/transactions/$id'),
-          headers: headers);
+        Uri.parse('$baseUrl/user/transactions/$id'),
+        headers: headers,
+      );
       if (response.statusCode == 200) {
         Get.snackbar('Success', 'Income removed successfully!');
         incomes.removeWhere((inc) => inc.id == id);

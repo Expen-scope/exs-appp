@@ -12,7 +12,8 @@ class ExpencesController extends GetxController {
   var expenseCategories = <String>[].obs;
   var isDataLoading = false.obs;
 
-  final String baseUrl = "http://10.0.2.2:8000/api";
+  final String baseUrl = "https://496f8c5ee7fb.ngrok-free.app/api";
+  // final String baseUrl = "http://10.0.2.2:8000/api";
   final _storage = const FlutterSecureStorage();
   String? authToken;
 
@@ -26,29 +27,35 @@ class ExpencesController extends GetxController {
     'Insurance',
     'Debt Payments',
     'Entertainment',
-    'Personal Care'
+    'Personal Care',
   ];
   final Map<String, CategoryInfo> expenseCategoriesData = {
-    'Housing': CategoryInfo(
-      color: Colors.redAccent,
-      icon: Icon(Icons.house),
-    ),
+    'Housing': CategoryInfo(color: Colors.redAccent, icon: Icon(Icons.house)),
     'Utilities': CategoryInfo(
       color: Colors.blueAccent,
       icon: Icon(Icons.lightbulb),
     ),
-    // ... أكمل بقية الفئات بنفس الطريقة
-    'Transportation':
-        CategoryInfo(color: Colors.green, icon: Icon(Icons.directions_car)),
-    'Groceries':
-        CategoryInfo(color: Colors.orange, icon: Icon(Icons.shopping_cart)),
-    'Dining Out':
-        CategoryInfo(color: Colors.purple, icon: Icon(Icons.restaurant)),
-    'Healthcare':
-        CategoryInfo(color: Colors.teal, icon: Icon(Icons.health_and_safety)),
+    'Transportation': CategoryInfo(
+      color: Colors.green,
+      icon: Icon(Icons.directions_car),
+    ),
+    'Groceries': CategoryInfo(
+      color: Colors.orange,
+      icon: Icon(Icons.shopping_cart),
+    ),
+    'Dining Out': CategoryInfo(
+      color: Colors.purple,
+      icon: Icon(Icons.restaurant),
+    ),
+    'Healthcare': CategoryInfo(
+      color: Colors.teal,
+      icon: Icon(Icons.health_and_safety),
+    ),
     'Insurance': CategoryInfo(color: Colors.indigo, icon: Icon(Icons.shield)),
-    'Debt Payments':
-        CategoryInfo(color: Colors.brown, icon: Icon(Icons.money_off)),
+    'Debt Payments': CategoryInfo(
+      color: Colors.brown,
+      icon: Icon(Icons.money_off),
+    ),
     'Entertainment': CategoryInfo(color: Colors.pink, icon: Icon(Icons.movie)),
     'Personal Care': CategoryInfo(color: Colors.cyan, icon: Icon(Icons.spa)),
   };
@@ -57,7 +64,10 @@ class ExpencesController extends GetxController {
   void onInit() {
     super.onInit();
     expenseCategories.assignAll(_defaultExpenseCategories);
-    _loadTokenAndFetchData();
+  }
+
+  Future<String?> _getAuthToken() async {
+    return await _storage.read(key: 'access_token');
   }
 
   Future<void> reloadDataAfterLogin() async {
@@ -72,10 +82,7 @@ class ExpencesController extends GetxController {
       return;
     }
     print("[ExpensesCtrl]  Auth token loaded.");
-    await Future.wait([
-      fetchExpenses(),
-      fetchCategories(),
-    ]);
+    await Future.wait([fetchExpenses(), fetchCategories()]);
   }
 
   Future<void> fetchCategories() async {
@@ -86,8 +93,10 @@ class ExpencesController extends GetxController {
         'Accept': 'application/json',
         'Authorization': 'Bearer $authToken',
       };
-      final response =
-          await http.get(Uri.parse('$baseUrl/categories'), headers: headers);
+      final response = await http.get(
+        Uri.parse('$baseUrl/categories'),
+        headers: headers,
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -96,7 +105,8 @@ class ExpencesController extends GetxController {
         expenseCategories.assignAll(combinedSet.toList());
       } else {
         print(
-            "Failed to load categories, using defaults. Status: ${response.statusCode}");
+          "Failed to load categories, using defaults. Status: ${response.statusCode}",
+        );
         expenseCategories.assignAll(_defaultExpenseCategories);
       }
     } catch (e) {
@@ -106,16 +116,24 @@ class ExpencesController extends GetxController {
   }
 
   Future<void> fetchExpenses() async {
-    if (authToken == null) return;
     isDataLoading.value = true;
+    final token = await _getAuthToken();
+    if (token == null) {
+      print("[ExpensesCtrl] Auth token not found. Cannot fetch data.");
+      isDataLoading.value = false;
+      return;
+    }
+
     try {
       final headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer $authToken',
+        'Authorization': 'Bearer $token',
       };
-      final response = await http.get(Uri.parse('$baseUrl/user/transactions'),
-          headers: headers);
+      final response = await http.get(
+        Uri.parse('$baseUrl/user/transactions'),
+        headers: headers,
+      );
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -132,6 +150,7 @@ class ExpencesController extends GetxController {
           listExpenses.value =
               expenseData.map((e) => Expense.fromJson(e)).toList();
         }
+        print("✅ Expenses fetched successfully.");
       } else {
         Get.snackbar('Error Fetching',
             'Failed to load expenses. Status: ${response.statusCode}');
@@ -144,7 +163,8 @@ class ExpencesController extends GetxController {
   }
 
   Future<void> addExpense(Expense expense) async {
-    if (authToken == null) {
+    final token = await _getAuthToken();
+    if (token == null) {
       Get.snackbar("Authentication Error", "Please log in again.");
       return;
     }
@@ -152,7 +172,7 @@ class ExpencesController extends GetxController {
       final headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer $authToken',
+        'Authorization': 'Bearer $token',
       };
       final response = await http.post(
         Uri.parse('$baseUrl/user/transactions'),
@@ -170,9 +190,12 @@ class ExpencesController extends GetxController {
         });
       } else {
         print(
-            'Failed to add expense. Status: ${response.statusCode}, Body: ${response.body}');
+          'Failed to add expense. Status: ${response.statusCode}, Body: ${response.body}',
+        );
         Get.snackbar(
-            'Error Adding', 'Failed to add expense. Please try again.');
+          'Error Adding',
+          'Failed to add expense. Please try again.',
+        );
       }
     } catch (e) {
       Get.snackbar('Error', 'An error occurred: $e');
@@ -180,23 +203,27 @@ class ExpencesController extends GetxController {
   }
 
   Future<void> removeExpense(int id) async {
-    if (authToken == null) return;
+    final token = await _getAuthToken();
+    if (token == null) return;
     try {
       final headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer $authToken',
+        'Authorization': 'Bearer $token',
       };
       final response = await http.delete(
-          Uri.parse('$baseUrl/user/transactions/$id'),
-          headers: headers);
+        Uri.parse('$baseUrl/user/transactions/$id'),
+        headers: headers,
+      );
 
       if (response.statusCode == 200) {
         Get.snackbar('Success', 'Expense removed successfully!');
         listExpenses.removeWhere((exp) => exp.id == id);
       } else {
-        Get.snackbar('Error Deleting',
-            'Failed to remove expense. Status: ${response.statusCode}');
+        Get.snackbar(
+          'Error Deleting',
+          'Failed to remove expense. Status: ${response.statusCode}',
+        );
       }
     } catch (e) {
       Get.snackbar('Error', 'An error occurred: $e');

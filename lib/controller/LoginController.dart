@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'package:abo_najib_2/controller/IncomesController.dart';
 import 'package:abo_najib_2/controller/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,13 +9,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/User.dart';
 import '../utils/dialog_helper.dart';
 import 'ExpensesController.dart';
+import 'ReminderController.dart';
 
 class LoginController extends GetxController {
-  final Dio.Dio dio = Dio.Dio(Dio.BaseOptions(
-    baseUrl: 'http://10.0.2.2:8000/api',
-    contentType: Dio.Headers.jsonContentType,
-    validateStatus: (status) => status! < 500,
-  ));
+  final Dio.Dio dio = Dio.Dio(
+    Dio.BaseOptions(
+      baseUrl: 'https://496f8c5ee7fb.ngrok-free.app/api',
+      // baseUrl: "http://10.0.2.2:8000/api",
+
+      contentType: Dio.Headers.jsonContentType,
+      validateStatus: (status) => status! < 500,
+    ),
+  );
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -57,7 +62,9 @@ class LoginController extends GetxController {
         String errorMessage =
             response.data['message'] ?? 'Invalid email or password';
         DialogHelper.showErrorDialog(
-            title: 'Login Error', message: errorMessage);
+          title: 'Login Error',
+          message: errorMessage,
+        );
       }
     } on Dio.DioException catch (e) {
       _handleDioError(e);
@@ -69,10 +76,12 @@ class LoginController extends GetxController {
   }
 
   Future<void> _saveAuthData(
-      UserModel user, String accessToken, String n8nToken) async {
+    UserModel user,
+    String accessToken,
+    String n8nToken,
+  ) async {
     await _storage.write(key: 'access_token', value: accessToken);
     await _storage.write(key: 'n8n_session_token', value: n8nToken);
-
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_data', user.toJsonString());
 
@@ -80,12 +89,23 @@ class LoginController extends GetxController {
       ..user.value = user
       ..isLoggedIn.value = true;
 
+    print("Reloading data for all controllers after login...");
+
     if (Get.isRegistered<ExpencesController>()) {
-      await Get.find<ExpencesController>().reloadDataAfterLogin();
+      await Get.find<ExpencesController>().fetchExpenses();
     }
 
-    print('Access Token saved successfully.');
+    if (Get.isRegistered<IncomesController>()) {
+      await Get.find<IncomesController>().fetchIncomes();
+    }
+
+    if (Get.isRegistered<ReminderController>()) {
+      await Get.find<ReminderController>().fetchReminders();
+    }
+
+    print('Access Token saved and all data reloaded successfully.');
   }
+
   // Future<void> _saveAuthData(
   //     UserModel user, String accessToken, String n8nToken) async {
   //   await _storage.write(key: 'access_token', value: accessToken);
@@ -113,7 +133,7 @@ class LoginController extends GetxController {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('user_data');
 
-        Get.find<UserController>().clearUser();
+        Get.find<UserController>().clearUserSession();
 
         Get.offAllNamed('/login');
       },
