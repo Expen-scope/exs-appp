@@ -107,18 +107,19 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
       context: context,
       initialTime: TimeOfDay.now(),
       builder: (BuildContext context, Widget? child) {
-        return Theme(//#006000
+        return Theme(
+          //#006000
 //#F8FCF8
 //#DBF0DB
 
-        data: Theme.of(context).copyWith(
+          data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
               primary: Color(0xFF149714),
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
             textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(foregroundColor:  Color(0xFF149714)),
+              style: TextButton.styleFrom(foregroundColor: Color(0xFF149714)),
             ),
           ),
           child: child!,
@@ -146,19 +147,19 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                   padding:
                       EdgeInsets.symmetric(horizontal: hight(context) * .007),
                   child: TextField(
-                    cursorColor:  Color(0xFF006000),
+                    cursorColor: Color(0xFF006000),
                     controller: nameController,
                     decoration: InputDecoration(
                       labelText: "Reminder Name",
                       labelStyle:
-                          TextStyle(color:  Color(0xFF006000), fontSize: 16),
+                          TextStyle(color: Color(0xFF006000), fontSize: 16),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide:
-                            BorderSide(color:  Color(0xFF006000), width: 2),
+                            BorderSide(color: Color(0xFF006000), width: 2),
                       ),
                     ),
                   ),
@@ -168,31 +169,31 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                   padding:
                       EdgeInsets.symmetric(horizontal: hight(context) * .007),
                   child: TextField(
-                    cursorColor:  Color(0xFF006000),
+                    cursorColor: Color(0xFF006000),
                     controller: priceController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       labelText: "Amount",
                       labelStyle:
-                          TextStyle(color:  Color(0xFF006000), fontSize: 16),
+                          TextStyle(color: Color(0xFF006000), fontSize: 16),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide:
-                            BorderSide(color:  Color(0xFF006000), width: 2),
+                            BorderSide(color: Color(0xFF006000), width: 2),
                       ),
                     ),
                   ),
                 ),
                 SizedBox(height: hight(context) * 0.024),
                 Padding(
-                  padding://#006000
+                  padding: //#006000
 //#F8FCF8
 //#DBF0DB
 
-                  EdgeInsets.symmetric(horizontal: hight(context) * .007),
+                      EdgeInsets.symmetric(horizontal: hight(context) * .007),
                   child: TextField(
                     cursorColor: Color(0xFF006000),
                     controller: collectedController,
@@ -200,7 +201,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                     decoration: InputDecoration(
                       labelText: "Amount collected",
                       labelStyle:
-                          TextStyle(color:  Color(0xFF006000), fontSize: 16),
+                          TextStyle(color: Color(0xFF006000), fontSize: 16),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

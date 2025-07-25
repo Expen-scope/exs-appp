@@ -47,7 +47,7 @@ class _MyCustomSplashScreenState extends State<MyCustomSplashScreen>
   Future<void> _initializeAppAndNavigate() async {
     await Future.delayed(const Duration(seconds: 3));
 
-    print("--- Initializing All Controllers ---");
+    print("Initializing All Controllers");
     Get.put(UserController(), permanent: true);
     Get.put(IncomesController(), permanent: true);
     Get.put(ExpencesController(), permanent: true);
@@ -56,7 +56,7 @@ class _MyCustomSplashScreenState extends State<MyCustomSplashScreen>
     Get.put(GoalController(), permanent: true);
     Get.lazyPut(() => LoginController());
     Get.lazyPut(() => RegisterController());
-    print("--- All Controllers Initialized ---");
+    print("All Controllers Initialized");
 
     await Get.find<UserController>().tryAutoLogin();
 
@@ -78,20 +78,20 @@ class _MyCustomSplashScreenState extends State<MyCustomSplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF006000),
+      backgroundColor:Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/Photo/khader (1).png',
-              height: 160,
+              'assets/Photo/logo.png',
+              height: 180,
             ),
             const SizedBox(height: 30),
             Text(
-              'ABO NAJIB',
+              'Exs',
               style: TextStyle(
-                color: Colors.white,
+                color:  Color(0xFF006000),
                 fontWeight: FontWeight.bold,
                 fontSize: _fontSizeAnimation.value,
               ),
