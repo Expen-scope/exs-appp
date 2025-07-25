@@ -77,44 +77,6 @@ class ReminderController extends GetxController {
       print(e.toString());
     }
   }
-  // Future<void> scheduleNotification(ReminderModel reminder) async {  print("--- DEBUG: Attempting to schedule notification ---");
-  //
-  // if (reminder.time.isBefore(DateTime.now())) return;
-  //
-  //   if (reminder.id == null) {
-  //     print("❌ ERROR: Reminder ID is null. Cannot schedule.");
-  //     return;
-  //   } if (reminder.time.isBefore(DateTime.now())) {
-  //   print("❌ ERROR: Reminder time is in the past. Cannot schedule.");
-  //   print("   - Reminder Time: ${reminder.time}");
-  //   print("   - Current Time:  ${DateTime.now()}");
-  //   return;
-  // } print("✅ Reminder data is valid for scheduling.");
-  // print("   - ID: ${reminder.id}");
-  // print("   - Name: ${reminder.name}");
-  // print("   - Raw Time: ${reminder.time} (Type: ${reminder.time.runtimeType})");
-  // print("   - Timezone: ${tz.local.name}");
-  // print("-------------------------------------------------");
-  //   await _notificationsPlugin.zonedSchedule(
-  //     reminder.id!,
-  //     'Reminder: ${reminder.name}',
-  //     "It's time for your reminder!",
-  //     tz.TZDateTime.from(reminder.time, tz.local),
-  //     const NotificationDetails(
-  //       android: AndroidNotificationDetails(
-  //         'reminder_channel',
-  //         'Reminder Notifications',
-  //         channelDescription: 'Channel for scheduled reminder notifications.',
-  //         importance: Importance.max,
-  //         priority: Priority.high,
-  //         playSound: true,
-  //       ),
-  //     ),
-  //     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-  //   );
-  //   print(" Notification scheduled for reminder: ${reminder.name}");
-  //
-  // }
 
   Future<void> cancelNotification(int reminderId) async {
     await _notificationsPlugin.cancel(reminderId);
