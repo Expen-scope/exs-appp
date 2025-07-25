@@ -78,7 +78,7 @@ class _MyCustomSplashScreenState extends State<MyCustomSplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:Colors.white,
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -91,7 +91,7 @@ class _MyCustomSplashScreenState extends State<MyCustomSplashScreen>
             Text(
               'Exs',
               style: TextStyle(
-                color:  Color(0xFF006000),
+                color: Color(0xFF006000),
                 fontWeight: FontWeight.bold,
                 fontSize: _fontSizeAnimation.value,
               ),
