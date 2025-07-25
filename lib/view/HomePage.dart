@@ -229,7 +229,6 @@ class HomePage extends StatelessWidget {
       ],
     );
   }
-// في ملف HomePage.dart
 
   Widget _buildChart({required bool isIncome}) {
     final List<Map<String, dynamic>> data = controller.monthlyTrends;
@@ -241,11 +240,11 @@ class HomePage extends StatelessWidget {
 
     if (validData.isEmpty) {
       return const Center(
-        child: Text("No data to display.", style: TextStyle(color: Colors.grey)),
+        child:
+            Text("No data to display.", style: TextStyle(color: Colors.grey)),
       );
     }
 
-    // 2. حساب أعلى قيمة للمحور Y
     double maxY = 0;
     for (var d in validData) {
       double value = d[isIncome ? 'income' : 'expense'];
@@ -265,7 +264,8 @@ class HomePage extends StatelessWidget {
               final amount = rod.toY;
               return BarTooltipItem(
                 '$period\n',
-                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
                 children: <TextSpan>[
                   TextSpan(
                     text: NumberFormat.currency(symbol: '\$').format(amount),
@@ -279,14 +279,14 @@ class HomePage extends StatelessWidget {
               );
             },
           ),
-          touchCallback: (FlTouchEvent event, barTouchResponse) {
-          },
+          touchCallback: (FlTouchEvent event, barTouchResponse) {},
         ),
-
         titlesData: FlTitlesData(
           show: true,
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -332,8 +332,6 @@ class HomePage extends StatelessWidget {
           getDrawingHorizontalLine: (value) =>
               FlLine(color: Colors.grey.shade200, strokeWidth: 1),
         ),
-
-        // --- >> رسم الأعمدة << ---
         barGroups: validData.asMap().entries.map((entry) {
           final index = entry.key;
           final item = entry.value;
@@ -357,6 +355,7 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildFinancialAnalysisView(BuildContext context) {
     final Map<String, Widget> analysisWidgets = {
       'income_vs_expense': _buildAnalysisCard(
@@ -608,7 +607,6 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildTransactionTile({
     required Icon icon,
