@@ -69,8 +69,9 @@ class ReminderController extends GetxController {
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       );
+
       print(
-          "✅✅✅ SUCCESS: zonedSchedule function was called successfully for '${reminder.name}'.");
+          "SUCCESS: zonedSchedule function was called successfully for '${reminder.name}'.");
     } catch (e) {
       print("= FATAL ERROR: An exception occurred inside zonedSchedule!");
       print(e.toString());
