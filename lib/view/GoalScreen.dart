@@ -16,6 +16,7 @@ class GoalsScreen extends StatelessWidget {
     return Scaffold(
       appBar: Appbarofpage(TextPage: "My Goals"),
       body: RefreshIndicator(
+        color: Color(0xFF006000),
         onRefresh: () => goalController.fetchGoals(),
         child: Obx(() {
           if (goalController.isLoading.value) {
@@ -38,7 +39,7 @@ class GoalsScreen extends StatelessWidget {
             itemCount: goalController.goals.length,
             itemBuilder: (context, index) {
               GoalModel goal = goalController.goals[index];
-              double progress = goal.collectedmoney / goal.price;
+              double progress = goal.savedAmount / goal.targetAmount;
 
               return InkWell(
                 onTap: () async {
@@ -66,7 +67,7 @@ class GoalsScreen extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF264653),
+                        color: Color(0xFF006000),
                       ),
                     ),
                     subtitle: Column(
@@ -77,7 +78,7 @@ class GoalsScreen extends StatelessWidget {
                           value: progress,
                           backgroundColor: Colors.grey[400],
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFF507da0).withOpacity(0.8),
+                            Color(0xFF006000),
                           ),
                           minHeight: 8,
                           borderRadius: BorderRadius.circular(10),
@@ -87,7 +88,7 @@ class GoalsScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "${goal.collectedmoney.toStringAsFixed(0)} / ${goal.price.toStringAsFixed(0)} SAR",
+                              "${goal.savedAmount.toStringAsFixed(0)} / ${goal.targetAmount.toStringAsFixed(0)} SAR",
                               style: TextStyle(
                                 color: Colors.grey[800],
                                 fontSize: 14,
@@ -105,13 +106,6 @@ class GoalsScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 8),
-                        Text(
-                          "Category: ${goal.category}",
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
-                          ),
-                        ),
                         Text(
                           "Deadline: ${goal.time.toLocal().toString().split(' ')[0]}",
                           style: TextStyle(

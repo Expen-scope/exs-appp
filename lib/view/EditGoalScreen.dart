@@ -57,10 +57,10 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
         return;
       }
 
-      final newTotal = widget.goal.collectedmoney! + enteredAmount;
-      final remaining = widget.goal.price! - widget.goal.collectedmoney!;
+      final newTotal = widget.goal.savedAmount! + enteredAmount;
+      final remaining = widget.goal.targetAmount! - widget.goal.savedAmount!;
 
-      if (newTotal > widget.goal.price!) {
+      if (newTotal > widget.goal.targetAmount!) {
         Get.snackbar(
           "Error",
           "The entered amount exceeds the remaining amount ($remaining)",
@@ -68,16 +68,11 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
         return;
       }
 
-      final updatedGoal = widget.goal.copyWith(collectedmoney: newTotal);
-
-      final success = await goalController.updateGoal(
-        widget.goal.id!,
-        updatedGoal,
-      );
-
+      final updatedGoal = widget.goal.copyWith(savedAmount: newTotal);
+      final success = await goalController.updateGoal(updatedGoal);
       if (success) {
         _amountController.clear();
-        if (newTotal >= widget.goal.price!) {
+        if (newTotal >= widget.goal.targetAmount!) {
           await _showNotification(
             "Goal Completed!",
             "Congratulations! You have achieved your goal!${widget.goal.name}",
@@ -93,8 +88,8 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final savedAmount = widget.goal.collectedmoney!;
-    final totalAmount = widget.goal.price!;
+    final savedAmount = widget.goal.savedAmount!;
+    final totalAmount = widget.goal.targetAmount!;
     final progress = totalAmount > 0 ? savedAmount / totalAmount : 0.0;
     final remainingAmount = totalAmount - savedAmount;
 
@@ -123,7 +118,7 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
           sections: [
             PieChartSectionData(
               value: progress * 100,
-              color: Color(0xFF507da0),
+              color: Color(0xFF086708),
               title: "${(progress * 100).toStringAsFixed(1)}%",
               radius: 60,
               titleStyle: const TextStyle(
@@ -152,7 +147,7 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
         style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: Color(0xFF2e495e),
+          color: Color(0xFF006000),
         ),
       ),
     );
@@ -160,23 +155,23 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
 
   Widget _buildAmountInput(double remaining) {
     return TextFormField(
-      cursorColor: Color(0xFF264653),
+      cursorColor: Color(0xFF006000),
       controller: _amountController,
       decoration: InputDecoration(
         labelText: "Added amount (remaining:${remaining.toStringAsFixed(2)})",
-        labelStyle: TextStyle(color: Color(0xFF264653), fontSize: 16),
+        labelStyle: TextStyle(color: Color(0x8E207320), fontSize: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFF2e495e)),
+          borderSide: const BorderSide(color: Color(0xFF006000)),
         ),
-        prefixIcon: Icon(Icons.attach_money, color: Color(0xFF2e495e)),
+        prefixIcon: Icon(Icons.attach_money, color: Color(0xFF006000)),
         suffixIcon: IconButton(
           icon: const Icon(Icons.clear),
           onPressed: () => _amountController.clear(),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Color(0xFF264653), width: 2),
+          borderSide: BorderSide(color: Color(0xFF006000), width: 2),
         ),
       ),
       keyboardType: TextInputType.numberWithOptions(decimal: true),

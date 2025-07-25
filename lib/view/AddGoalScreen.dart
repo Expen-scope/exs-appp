@@ -17,11 +17,8 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
   final TextEditingController collectedController = TextEditingController();
 
   bool isLoading = false;
-  String selectedCategory = "Travel";
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
-
-  final List<String> categories = ["Travel", "Savings", "Education", "Others"];
 
   Future<void> saveGoal() async {
     setState(() => isLoading = true);
@@ -58,15 +55,13 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
     final newGoal = GoalModel(
       id: null,
       name: nameController.text,
-      price: double.parse(priceController.text),
-      collectedmoney: double.parse(collectedController.text),
-      category: selectedCategory,
+      targetAmount: double.parse(priceController.text),
+      savedAmount: double.parse(collectedController.text),
       time: finalDateTime,
-      createdAt: DateTime.now(),
     );
 
-    bool success = await goalController.addGoal(newGoal);
-    if (success) {
+    final addedGoal = await goalController.addGoal(newGoal);
+    if (addedGoal != null) {
       await Future.delayed(Duration(milliseconds: 300));
       if (mounted) {
         Navigator.pop(context);
@@ -122,12 +117,12 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: Color(0xFF507da0),
+              primary: Color(0xFF006000),
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
             textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(foregroundColor: Color(0xFF507da0)),
+              style: TextButton.styleFrom(foregroundColor: Color(0xFF006000)),
             ),
           ),
           child: child!,
@@ -154,12 +149,12 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                   horizontal: hight(Get.context!) * .007,
                 ),
                 child: TextField(
-                  cursorColor: Color(0xFF264653),
+                  cursorColor: Color(0xFF006000),
                   controller: nameController,
                   decoration: InputDecoration(
                     labelText: "Goal Name",
                     labelStyle: TextStyle(
-                      color: Color(0xFF264653),
+                      color: Color(0xFF006000),
                       fontSize: 16,
                     ),
                     border: OutlineInputBorder(
@@ -168,7 +163,7 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Color(0xFF264653),
+                        color: Color(0xFF006000),
                         width: 2,
                       ),
                     ),
@@ -181,13 +176,13 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                   horizontal: hight(Get.context!) * .007,
                 ),
                 child: TextField(
-                  cursorColor: Color(0xFF264653),
+                  cursorColor: Color(0xFF006000),
                   controller: priceController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: "Target Amount",
                     labelStyle: TextStyle(
-                      color: Color(0xFF264653),
+                      color: Color(0xFF006000),
                       fontSize: 16,
                     ),
                     border: OutlineInputBorder(
@@ -196,7 +191,7 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Color(0xFF264653),
+                        color: Color(0xFF006000),
                         width: 2,
                       ),
                     ),
@@ -209,13 +204,13 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                   horizontal: hight(Get.context!) * .007,
                 ),
                 child: TextField(
-                  cursorColor: Color(0xFF264653),
+                  cursorColor: Color(0xFF006000),
                   controller: collectedController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: "Amount collected",
                     labelStyle: TextStyle(
-                      color: Color(0xFF264653),
+                      color: Color(0xFF006000),
                       fontSize: 16,
                     ),
                     border: OutlineInputBorder(
@@ -224,43 +219,7 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Color(0xFF264653),
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: hight(context) * 0.024),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: hight(Get.context!) * .007,
-                ),
-                child: DropdownButtonFormField<String>(
-                  value: selectedCategory,
-                  dropdownColor: Colors.white,
-                  items: categories.map((category) {
-                    return DropdownMenuItem(
-                      value: category,
-                      child: Text(category),
-                    );
-                  }).toList(),
-                  onChanged: (value) =>
-                      setState(() => selectedCategory = value!),
-                  decoration: InputDecoration(
-                    labelText: "Category",
-                    labelStyle: TextStyle(
-                      color: Color(0xFF264653),
-                      fontSize: 16,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: Colors.black, width: 1.5),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: Color(0xFF264653),
+                        color: Color(0xFF006000),
                         width: 2,
                       ),
                     ),
