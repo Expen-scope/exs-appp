@@ -21,7 +21,7 @@ class RegisterController extends GetxController {
 
   final Dio.Dio dio = Dio.Dio(
     Dio.BaseOptions(
-      baseUrl: 'https://496f8c5ee7fb.ngrok-free.app/api',
+      baseUrl: 'https://f1fc42afeee8.ngrok-free.app/api',
       // baseUrl: "http://10.0.2.2:8000/api",
 
       contentType: Dio.Headers.jsonContentType,
@@ -87,7 +87,7 @@ class RegisterController extends GetxController {
           },
         );
 
-        print('✅ Full Response: ${response.data}');
+        print(' Full Response: ${response.data}');
 
         if ([200, 201].contains(response.statusCode)) {
           showSuccessDialog();
@@ -95,15 +95,15 @@ class RegisterController extends GetxController {
           handleServerErrors(response.data);
         }
       } on Dio.DioException catch (e) {
-        print('🚨 Dio Error: ${e.message}');
+        print(' Dio Error: ${e.message}');
         showErrorDialog(
           "Connection error: ${e.message ?? 'An unknown error has occurred'}",
         );
       } on FormatException catch (e) {
-        print('❌ Format Error: $e');
+        print(' Format Error: $e');
         showErrorDialog("Data format error: ${e.message}");
       } catch (e) {
-        print('‼️ Critical Error: $e');
+        print(' Critical Error: $e');
         showErrorDialog("An unexpected error occurred: ${e.toString()}");
       } finally {
         isLoading.value = false;

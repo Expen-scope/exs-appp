@@ -14,7 +14,7 @@ import 'ReminderController.dart';
 class LoginController extends GetxController {
   final Dio.Dio dio = Dio.Dio(
     Dio.BaseOptions(
-      baseUrl: 'https://496f8c5ee7fb.ngrok-free.app/api',
+      baseUrl: 'https://f1fc42afeee8.ngrok-free.app/api',
       // baseUrl: "http://10.0.2.2:8000/api",
 
       contentType: Dio.Headers.jsonContentType,
@@ -72,6 +72,8 @@ class LoginController extends GetxController {
       _handleGenericError(e);
     } finally {
       isLoading.value = false;
+      emailController.clear();
+      passwordController.clear();
     }
   }
 

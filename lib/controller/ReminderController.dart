@@ -16,7 +16,7 @@ class ReminderController extends GetxController {
       FlutterLocalNotificationsPlugin();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  final String _baseUrl = "https://496f8c5ee7fb.ngrok-free.app/api/user";
+  final String _baseUrl = "https://f1fc42afeee8.ngrok-free.app/api/user";
   // final String _baseUrl = "http://10.0.2.2:8000/api/user";
 
   @override

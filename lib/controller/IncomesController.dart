@@ -1,3 +1,4 @@
+import 'package:abo_najib_2/controller/user_controller.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -10,7 +11,7 @@ class IncomesController extends GetxController {
   var incomeCategories = <String>[].obs;
   var isDataLoading = false.obs;
 
-  final String baseUrl = "https://496f8c5ee7fb.ngrok-free.app/api";
+  final String baseUrl = "https://f1fc42afeee8.ngrok-free.app/api";
   // final String baseUrl = "http://10.0.2.2:8000/api";
 
   final _storage = const FlutterSecureStorage();
@@ -122,6 +123,9 @@ class IncomesController extends GetxController {
     if (token == null) {
       print("[IncomesCtrl] Auth token not found. Cannot fetch data.");
       isDataLoading.value = false;
+      Get.snackbar('Authentication Error', 'Please login again.');
+      await Get.find<UserController>().clearUserSession();
+      Get.offAllNamed('/Login');
       return;
     }
 
@@ -136,6 +140,7 @@ class IncomesController extends GetxController {
         Uri.parse('$baseUrl/user/transactions'),
         headers: headers,
       );
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final List dataList =
@@ -143,7 +148,12 @@ class IncomesController extends GetxController {
         final incomeData =
             dataList.where((e) => e['type_transaction'] == 'income').toList();
         incomes.value = incomeData.map((e) => Income.fromJson(e)).toList();
-        print("✅ Incomes fetched successfully.");
+        print("Incomes fetched successfully.");
+      } else if (response.statusCode == 401) {
+        print("Token expired or unauthorized. Logging out user.");
+        Get.snackbar('Session Expired', 'Please login again.');
+        await Get.find<UserController>().clearUserSession();
+        Get.offAllNamed('/Login');
       } else {
         Get.snackbar(
             'Error Fetching Incomes', 'Status: ${response.statusCode}');
