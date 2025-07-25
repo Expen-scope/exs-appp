@@ -229,7 +229,134 @@ class HomePage extends StatelessWidget {
       ],
     );
   }
+// في ملف HomePage.dart
 
+  Widget _buildChart({required bool isIncome}) {
+    final List<Map<String, dynamic>> data = controller.monthlyTrends;
+
+    final List<Map<String, dynamic>> validData = data.where((d) {
+      final value = d[isIncome ? 'income' : 'expense'];
+      return value is num && value >= 0 && !value.isNaN && !value.isInfinite;
+    }).toList();
+
+    if (validData.isEmpty) {
+      return const Center(
+        child: Text("No data to display.", style: TextStyle(color: Colors.grey)),
+      );
+    }
+
+    // 2. حساب أعلى قيمة للمحور Y
+    double maxY = 0;
+    for (var d in validData) {
+      double value = d[isIncome ? 'income' : 'expense'];
+      if (value > maxY) maxY = value;
+    }
+    maxY = maxY * 1.2;
+    if (maxY == 0) maxY = 100;
+
+    return BarChart(
+      BarChartData(
+        maxY: maxY,
+        barTouchData: BarTouchData(
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              final itemData = validData[group.x.toInt()];
+              final period = itemData['month'];
+              final amount = rod.toY;
+              return BarTooltipItem(
+                '$period\n',
+                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: NumberFormat.currency(symbol: '\$').format(amount),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          touchCallback: (FlTouchEvent event, barTouchResponse) {
+          },
+        ),
+
+        titlesData: FlTitlesData(
+          show: true,
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (double value, TitleMeta meta) {
+                final index = value.toInt();
+                if (index >= 0 && index < validData.length) {
+                  final period = validData[index]['month'].toString();
+                  String title = period.split(' ').first;
+                  return SideTitleWidget(
+                    space: 8.0,
+                    meta: meta,
+                    child: Text(
+                      title.length > 4 ? title.substring(0, 3) : title,
+                      style: const TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12),
+                    ),
+                  );
+                }
+                return const Text('');
+              },
+              reservedSize: 38,
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 45,
+              getTitlesWidget: (value, meta) {
+                if (value == 0) return const Text('');
+                return Text(NumberFormat.compact().format(value),
+                    style: const TextStyle(color: Colors.grey, fontSize: 10));
+              },
+            ),
+          ),
+        ),
+        borderData: FlBorderData(show: false),
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: maxY / 4,
+          getDrawingHorizontalLine: (value) =>
+              FlLine(color: Colors.grey.shade200, strokeWidth: 1),
+        ),
+
+        // --- >> رسم الأعمدة << ---
+        barGroups: validData.asMap().entries.map((entry) {
+          final index = entry.key;
+          final item = entry.value;
+          final double value = item[isIncome ? 'income' : 'expense'];
+
+          return BarChartGroupData(
+            x: index,
+            barRods: [
+              BarChartRodData(
+                toY: value,
+                color: isIncome ? Colors.green : Colors.red,
+                width: 16,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(4),
+                  topRight: Radius.circular(4),
+                ),
+              ),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
   Widget _buildFinancialAnalysisView(BuildContext context) {
     final Map<String, Widget> analysisWidgets = {
       'income_vs_expense': _buildAnalysisCard(
@@ -482,67 +609,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildChart({required bool isIncome}) {
-    final List<Map<String, dynamic>> data = controller.monthlyTrends;
-    if (data.isEmpty) {
-      return const Center(child: Text("No data for chart."));
-    }
-    final spots = data.asMap().entries.map((entry) {
-      int index = entry.key;
-      double value = isIncome ? entry.value['income'] : entry.value['expense'];
-      return FlSpot(index.toDouble(), value);
-    }).toList();
-    return LineChart(
-      LineChartData(
-        gridData: FlGridData(show: false),
-        titlesData: FlTitlesData(
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, meta) {
-                int index = value.toInt();
-                if (index >= 0 && index < data.length) {
-                  String month = data[index]['month'].toString().split(' ')[0];
-                  return Text(
-                    month,
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                  );
-                }
-                return const Text('');
-              },
-              interval: 1,
-            ),
-          ),
-          leftTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-        ),
-        borderData: FlBorderData(show: false),
-        lineBarsData: [
-          LineChartBarData(
-            spots: spots,
-            isCurved: true,
-            color: isIncome ? Colors.green : Colors.red,
-            barWidth: 3,
-            isStrokeCapRound: true,
-            dotData: FlDotData(show: false),
-            belowBarData: BarAreaData(
-              show: true,
-              color: isIncome
-                  ? Colors.green.withOpacity(0.2)
-                  : Colors.red.withOpacity(0.2),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildTransactionTile({
     required Icon icon,
