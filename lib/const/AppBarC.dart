@@ -29,7 +29,7 @@ class Appbarofpage extends StatelessWidget implements PreferredSizeWidget {
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF006000),
+                  color: Color(0xFF015001),
                 ),
               ),
             ),

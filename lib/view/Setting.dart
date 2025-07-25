@@ -132,7 +132,7 @@ class _SettingState extends State<Setting> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF264653),
+                          color: Color(0xFF015001),
                         ),
                       ),
                     ),

@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/User.dart';
 import '../utils/dialog_helper.dart';
 import 'ExpensesController.dart';
+import 'FinancialController.dart';
 import 'ReminderController.dart';
 
 class LoginController extends GetxController {
@@ -106,23 +107,8 @@ class LoginController extends GetxController {
     }
 
     print('Access Token saved and all data reloaded successfully.');
+    await Get.find<FinancialController>().refreshAllCalculations();
   }
-
-  // Future<void> _saveAuthData(
-  //     UserModel user, String accessToken, String n8nToken) async {
-  //   await _storage.write(key: 'access_token', value: accessToken);
-  //   await _storage.write(key: 'n8n_session_token', value: n8nToken);
-  //
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString('user_data', user.toJsonString());
-  //
-  //   final userController = Get.find<UserController>();
-  //   userController.user.value = user;
-  //   userController.isLoggedIn.value = true;
-  //
-  //   print('Access Token saved successfully.');
-  //   print('N8N Session Token saved successfully.');
-  // }
 
   Future<void> logout() async {
     DialogHelper.showConfirmDialog(

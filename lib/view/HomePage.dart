@@ -368,7 +368,7 @@ class HomePage extends StatelessWidget {
         key: const ValueKey('savings_rate'),
         title: "Savings Rate",
         height: 320,
-        child: _buildSavingsGauge(),
+        child: _buildProjectionCard(),
       ),
       'category_breakdown': _buildAnalysisCard(
         key: const ValueKey('category_breakdown'),
@@ -776,58 +776,79 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildSavingsGauge() {
-    final double rate = controller.savingsRate.value;
-    Color indicatorColor;
-    if (rate < 0) {
-      indicatorColor = Colors.red;
-    } else if (rate < 10) {
-      indicatorColor = Colors.orange;
-    } else {
-      indicatorColor = Colors.green;
-    }
-    final double normalizedValue = (rate.clamp(-100, 100) + 100) / 200;
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        SizedBox(
-          width: 200,
-          height: 200,
-          child: CircularProgressIndicator(
-            value: 1,
-            strokeWidth: 20,
-            backgroundColor: Colors.grey.shade200,
-            color: indicatorColor.withOpacity(0.2),
-          ),
-        ),
-        SizedBox(
-          width: 200,
-          height: 200,
-          child: CircularProgressIndicator(
-            value: normalizedValue,
-            strokeWidth: 20,
-            valueColor: AlwaysStoppedAnimation<Color>(indicatorColor),
-            strokeCap: StrokeCap.round,
-          ),
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '${rate.toStringAsFixed(1)}%',
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: indicatorColor,
+  Widget _buildProjectionCard() {
+    final format = NumberFormat.currency(symbol: '\$', decimalDigits: 0);
+
+    return Obx(() {
+      final pIncome = controller.projectedIncome.value;
+      final pExpense = controller.projectedExpense.value;
+      final pBalance = controller.projectedBalance.value;
+
+      final totalProjection = pIncome + pExpense;
+      final double incomeRatio =
+          (totalProjection > 0) ? pIncome / totalProjection : 0.0;
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Projected Income",
+                      style: TextStyle(fontSize: 14)),
+                  Text(format.format(pIncome),
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.bold)),
+                ],
               ),
-            ),
-            const Text(
-              "of income saved",
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-          ],
-        ),
-      ],
-    );
+              const SizedBox(height: 8),
+              LinearProgressIndicator(
+                value: incomeRatio,
+                minHeight: 12,
+                borderRadius: BorderRadius.circular(6),
+                backgroundColor: Colors.red.shade100,
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(Colors.green.shade400),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Projected Expense",
+                      style: TextStyle(fontSize: 14)),
+                  Text(format.format(pExpense),
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red)),
+                ],
+              ),
+            ],
+          ),
+          const Divider(height: 40, thickness: 1),
+          Column(
+            children: [
+              const Text(
+                "Projected End-of-Month Balance",
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                format.format(pBalance),
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: pBalance >= 0 ? const Color(0xFF006000) : Colors.red,
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    });
   }
 }

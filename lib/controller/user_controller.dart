@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/User.dart';
+import 'FinancialController.dart';
 import 'IncomesController.dart';
 import 'ExpensesController.dart';
 import 'ReminderController.dart';
@@ -47,10 +48,14 @@ class UserController extends GetxController {
             Get.find<ReminderController>().fetchReminders(),
         ]);
         print("Initial data fetch complete.");
+
+        print("Triggering initial financial calculations...");
+        if (Get.isRegistered<FinancialController>()) {
+          await Get.find<FinancialController>().refreshAllCalculations();
+        }
       } else {
         print("No valid session found. User must log in.");
         isLoggedIn.value = false;
-        await clearUserSession();
       }
     } catch (e) {
       print("Error during auto-login: $e");
@@ -95,7 +100,7 @@ class UserController extends GetxController {
       }
 
       final response = await _dio.post(
-        '${_apiUrl}user/changePassword',
+        '${_apiUrl}user/change-password',
         data: {
           'current_password': currentPassword,
           'new_password': newPassword,

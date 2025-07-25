@@ -12,7 +12,9 @@ enum ActiveTab { expenses, incomes, analysis }
 class FinancialController extends GetxController {
   final IncomesController incomesController = Get.find();
   final ExpencesController expensesController = Get.find();
-
+  final RxDouble projectedIncome = 0.0.obs;
+  final RxDouble projectedExpense = 0.0.obs;
+  final RxDouble projectedBalance = 0.0.obs;
   final activeTab = ActiveTab.expenses.obs;
   final RxBool isLoading = true.obs;
   final RxString errorMessage = ''.obs;
@@ -42,8 +44,22 @@ class FinancialController extends GetxController {
   void onInit() {
     super.onInit();
     _setDefaultPeriod();
-    fetchAllData();
     _setupDataListeners();
+  }
+
+  Future<void> refreshAllCalculations() async {
+    isLoading.value = true;
+    errorMessage.value = '';
+    try {
+      print("Refreshing");
+      await Future.delayed(const Duration(milliseconds: 50));
+      loadData();
+    } catch (e) {
+      errorMessage.value = 'Failed: $e';
+      Get.snackbar('Calculation Error', errorMessage.value);
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   var analysisWidgetOrder = <String>[
@@ -59,8 +75,10 @@ class FinancialController extends GetxController {
   Future<void> fetchAllData() async {
     isLoading.value = true;
     try {
-      await incomesController.fetchIncomes();
-      await expensesController.fetchExpenses();
+      await Future.wait([
+        incomesController.fetchIncomes(),
+        expensesController.fetchExpenses(),
+      ]);
       loadData();
     } catch (e) {
       errorMessage.value = 'Failed to fetch data: $e';
@@ -93,34 +111,26 @@ class FinancialController extends GetxController {
   }
 
   void _setupDataListeners() {
-    ever(incomesController.incomes, (_) {
-      print(
-        "FinancialController: Detected change in INCOMES. Reloading data...",
-      );
-      loadData();
-    });
-    ever(expensesController.listExpenses, (_) {
-      print(
-        "FinancialController: Detected change in EXPENSES. Reloading data...",
-      );
-      loadData();
+    var isRecalculating = false;
+
+    everAll([incomesController.incomes, expensesController.listExpenses],
+        (_) async {
+      if (isRecalculating) return;
+      isRecalculating = true;
+      print("FinancialController: Data changed. Waiting a moment...");
+      await Future.delayed(const Duration(milliseconds: 300));
+      await refreshAllCalculations();
+      isRecalculating = false;
     });
   }
 
-  void changeTab(ActiveTab tab) {
-    activeTab.value = tab;
-  }
-
-  Future<void> loadData() async {
-    isLoading.value = true;
+  void loadData() {
     errorMessage.value = '';
     try {
-      await Future.delayed(Duration.zero);
       _processData();
     } catch (e) {
       print('ERROR in FinancialController -> loadData: $e');
-    } finally {
-      isLoading.value = false;
+      errorMessage.value = 'Failed to process data: $e';
     }
   }
 
@@ -186,6 +196,7 @@ class FinancialController extends GetxController {
       0.0,
       (sum, expense) => sum + expense.price,
     );
+    _processProjections();
   }
 
   void _calculateBalance() {
@@ -214,6 +225,10 @@ class FinancialController extends GetxController {
     });
 
     transactions.assignAll(combined);
+  }
+
+  void changeTab(ActiveTab tab) {
+    activeTab.value = tab;
   }
 
   void _processCategoryAnalysis() {
@@ -506,5 +521,55 @@ class FinancialController extends GetxController {
     startDate.value = start;
     endDate.value = end;
     loadData();
+  }
+
+  void _processProjections() {
+    if (startDate.value == null || endDate.value == null) {
+      projectedIncome.value = 0.0;
+      projectedExpense.value = 0.0;
+      projectedBalance.value = 0.0;
+      return;
+    }
+
+    final List<Income> periodIncomes =
+        _filterByDateRange(incomesController.incomes);
+    final List<Expense> periodExpenses =
+        _filterByDateRange(expensesController.listExpenses);
+
+    final totalCurrentIncome =
+        periodIncomes.fold(0.0, (sum, i) => sum + i.price);
+    final totalCurrentExpense =
+        periodExpenses.fold(0.0, (sum, e) => sum + e.price);
+
+    final now = DateTime.now();
+    if (now.isAfter(startDate.value!) && now.isBefore(endDate.value!)) {
+      final totalDaysInPeriod =
+          endDate.value!.difference(startDate.value!).inDays + 1;
+      final daysPassed = now.difference(startDate.value!).inDays + 1;
+      final daysRemaining = totalDaysInPeriod - daysPassed;
+
+      if (daysPassed > 0 && daysRemaining >= 0) {
+        final avgDailyIncome = totalCurrentIncome / daysPassed;
+        final avgDailyExpense = totalCurrentExpense / daysPassed;
+
+        projectedIncome.value =
+            totalCurrentIncome + (avgDailyIncome * daysRemaining);
+        projectedExpense.value =
+            totalCurrentExpense + (avgDailyExpense * daysRemaining);
+      } else {
+        projectedIncome.value = totalCurrentIncome;
+        projectedExpense.value = totalCurrentExpense;
+      }
+    } else {
+      projectedIncome.value = totalCurrentIncome;
+      projectedExpense.value = totalCurrentExpense;
+    }
+
+    projectedBalance.value = projectedIncome.value - projectedExpense.value;
+
+    print(
+        "--- Projections Calculated for period: ${startDate.value} to ${endDate.value} ---");
+    print("Projected Income: ${projectedIncome.value}");
+    print("Projected Expense: ${projectedExpense.value}");
   }
 }
