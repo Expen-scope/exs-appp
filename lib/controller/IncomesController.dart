@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../const/Constants.dart';
 import '../model/Incomes.dart';
 
 class IncomesController extends GetxController {
@@ -11,7 +12,6 @@ class IncomesController extends GetxController {
   var incomeCategories = <String>[].obs;
   var isDataLoading = false.obs;
 
-  final String baseUrl = "https://f1fc42afeee8.ngrok-free.app/api";
   // final String baseUrl = "http://10.0.2.2:8000/api";
 
   final _storage = const FlutterSecureStorage();

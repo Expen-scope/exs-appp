@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as Dio;
 
+import '../const/Constants.dart';
 import '../utils/dialog_helper.dart';
 
 class RegisterController extends GetxController {
@@ -21,7 +22,7 @@ class RegisterController extends GetxController {
 
   final Dio.Dio dio = Dio.Dio(
     Dio.BaseOptions(
-      baseUrl: 'https://f1fc42afeee8.ngrok-free.app/api',
+      baseUrl: baseUrl,
       // baseUrl: "http://10.0.2.2:8000/api",
 
       contentType: Dio.Headers.jsonContentType,

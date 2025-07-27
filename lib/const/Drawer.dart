@@ -57,6 +57,11 @@ Widget CustomDrawer(BuildContext context) {
                 route: () => Get.toNamed("/ExpencesScreens"),
               ),
               _buildDrawerItem(
+                icon: Icons.chat_bubble_outline,
+                title: 'Chat',
+                route: () => Get.toNamed("/Goals"),
+              ),
+              _buildDrawerItem(
                 icon: Icons.settings,
                 title: 'Settings',
                 route: () => Get.toNamed("/Setting"),

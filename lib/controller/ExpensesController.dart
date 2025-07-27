@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../const/Constants.dart';
 import '../model/Expenses.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,6 @@ class ExpencesController extends GetxController {
   var expenseCategories = <String>[].obs;
   var isDataLoading = false.obs;
 
-  final String baseUrl = "https://f1fc42afeee8.ngrok-free.app/api";
   // final String baseUrl = "http://10.0.2.2:8000/api";
   final _storage = const FlutterSecureStorage();
   String? authToken;

@@ -5,7 +5,7 @@ const kPrimarycolor = Color(0xFFF2F0EF);
 const kPrimaryFontText = 'RobotoSlab';
 const kPTajawal = 'Tajawal-Regular';
 const kboldTajwal = 'Tajawal-Bold';
-
+final String baseUrl = "https://cb4381a55a5f.ngrok-free.app/api";
 const messagecolletion = 'message';
 const KPphoto = 'assets/photo/chat_app_logo.png';
 const datetime = 'createdat';

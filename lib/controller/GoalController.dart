@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import '../const/Constants.dart';
 import '../model/Goal.dart';
 
 class GoalController extends GetxController {
@@ -11,7 +12,6 @@ class GoalController extends GetxController {
   final Dio _dio = Dio();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  final String _baseUrl = "https://f1fc42afeee8.ngrok-free.app/api/user";
   // final String _baseUrl = "http://10.0.2.2:8000/api/user";
 
   @override
@@ -32,7 +32,7 @@ class GoalController extends GetxController {
       if (token == null) throw Exception('Authentication token not found.');
 
       final response = await _dio.get(
-        '$_baseUrl/goals',
+        '$baseUrl/user/goals',
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
@@ -58,7 +58,7 @@ class GoalController extends GetxController {
       if (token == null) throw Exception('Authentication token not found.');
 
       final response = await _dio.post(
-        '$_baseUrl/goals',
+        '$baseUrl/user/goals',
         data: goal.toJson(),
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
@@ -89,7 +89,7 @@ class GoalController extends GetxController {
       if (goal.id == null) throw Exception('Goal ID is missing');
 
       final response = await _dio.put(
-        '$_baseUrl/goals/${goal.id}',
+        '$baseUrl/user/goals/${goal.id}',
         data: goal.toJson(),
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
@@ -121,7 +121,7 @@ class GoalController extends GetxController {
       if (token == null) throw Exception('Authentication token not found.');
 
       final response = await _dio.delete(
-        '$_baseUrl/goals/$goalId',
+        '$baseUrl/user/goals/$goalId',
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 

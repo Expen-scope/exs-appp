@@ -6,6 +6,7 @@ import 'package:dio/dio.dart' as Dio;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../const/Constants.dart';
 import '../model/User.dart';
 import '../utils/dialog_helper.dart';
 import 'ExpensesController.dart';
@@ -15,7 +16,7 @@ import 'ReminderController.dart';
 class LoginController extends GetxController {
   final Dio.Dio dio = Dio.Dio(
     Dio.BaseOptions(
-      baseUrl: 'https://f1fc42afeee8.ngrok-free.app/api',
+      baseUrl: baseUrl,
       // baseUrl: "http://10.0.2.2:8000/api",
 
       contentType: Dio.Headers.jsonContentType,

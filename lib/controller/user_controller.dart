@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../const/Constants.dart';
 import '../model/User.dart';
 import 'FinancialController.dart';
 import 'IncomesController.dart';
@@ -17,7 +18,6 @@ class UserController extends GetxController {
   final RxBool isLoading = true.obs;
   var selectedImage = Rx<File?>(null);
 
-  final String _apiUrl = "https://f1fc42afeee8.ngrok-free.app/api/";
   final _storage = const FlutterSecureStorage();
   final _dio = Dio();
 
@@ -100,7 +100,7 @@ class UserController extends GetxController {
       }
 
       final response = await _dio.post(
-        '${_apiUrl}user/change-password',
+        '${baseUrl}/user/change-password',
         data: {
           'current_password': currentPassword,
           'new_password': newPassword,

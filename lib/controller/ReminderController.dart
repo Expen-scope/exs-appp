@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:timezone/timezone.dart' as tz;
 
+import '../const/Constants.dart';
 import '../model/Reminder.dart';
 
 class ReminderController extends GetxController {
@@ -16,7 +17,6 @@ class ReminderController extends GetxController {
       FlutterLocalNotificationsPlugin();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  final String _baseUrl = "https://f1fc42afeee8.ngrok-free.app/api/user";
   // final String _baseUrl = "http://10.0.2.2:8000/api/user";
 
   @override
@@ -96,7 +96,7 @@ class ReminderController extends GetxController {
       if (token == null) throw Exception('Authentication token not found.');
 
       final response = await _dio.get(
-        '$_baseUrl/reminders',
+        '$baseUrl/user/reminders',
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
@@ -126,7 +126,7 @@ class ReminderController extends GetxController {
       if (token == null) throw Exception('Authentication token not found.');
 
       final response = await _dio.post(
-        '$_baseUrl/reminders',
+        '$baseUrl/user/reminders',
         data: reminder.toJson(),
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
@@ -202,7 +202,7 @@ class ReminderController extends GetxController {
       if (reminder.id == null) throw Exception('Reminder ID is missing');
 
       final response = await _dio.put(
-        '$_baseUrl/reminders/${reminder.id}',
+        '$baseUrl/user/reminders/${reminder.id}',
         data: reminder.toJson(),
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
@@ -242,7 +242,7 @@ class ReminderController extends GetxController {
       if (token == null) throw Exception('Authentication token not found.');
 
       final response = await _dio.delete(
-        '$_baseUrl/reminders/$reminderId',
+        '$baseUrl/user/reminders/$reminderId',
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
