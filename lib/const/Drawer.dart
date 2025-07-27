@@ -59,7 +59,7 @@ Widget CustomDrawer(BuildContext context) {
               _buildDrawerItem(
                 icon: Icons.chat_bubble_outline,
                 title: 'Chat',
-                route: () => Get.toNamed("/Goals"),
+                route: () => Get.toNamed("/ChatPage"),
               ),
               _buildDrawerItem(
                 icon: Icons.settings,

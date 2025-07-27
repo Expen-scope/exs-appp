@@ -6,6 +6,7 @@ import 'package:abo_najib_2/view/AddExpense.dart';
 import 'package:abo_najib_2/view/AddGoalScreen.dart';
 import 'package:abo_najib_2/view/AddIncomes.dart';
 import 'package:abo_najib_2/view/AddReminder.dart';
+import 'package:abo_najib_2/view/Chat.dart';
 import 'package:abo_najib_2/view/ExpencesScreens.dart';
 import 'package:abo_najib_2/view/GoalScreen.dart';
 import 'package:abo_najib_2/view/HomePage.dart';
@@ -19,6 +20,7 @@ import 'package:abo_najib_2/view/WelcomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'controller/login_binding.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -83,6 +85,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       theme: ThemeData(
+        textTheme: GoogleFonts.cairoTextTheme(
+          Theme.of(context).textTheme,
+        ),
         scaffoldBackgroundColor: Color(0xffF5F5F5),
         drawerTheme: DrawerThemeData(backgroundColor: Color(0xffF5F5F5)),
       ),
@@ -153,6 +158,10 @@ class MyApp extends StatelessWidget {
           name: ("/OtpVerificationPage"),
           page: () => OtpVerificationPage(email: ''),
         ),
+        GetPage(
+          name: ("/ChatPage"),
+          page: () => ChatPage(),
+        )
       ],
       initialRoute: '/MyCustomSplashScreen',
     );
