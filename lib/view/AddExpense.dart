@@ -218,54 +218,57 @@ class _AddExpencesState extends State<AddExpences> {
               ),
             ),
             SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                print("Button Pressed!");
-                print("Source: ${sourceController.text}");
-                print("Value: ${valueController.text}");
-                print("Currency: ${currencyController.text}");
-                print("Category: ${selectedCategory.value}");
-                if (sourceController.text.isNotEmpty &&
-                    valueController.text.isNotEmpty &&
-                    currencyController.text.isNotEmpty &&
-                    selectedCategory.value != null) {
-                  final String formattedDate = DateFormat(
-                    'yyyy-MM-dd',
-                  ).format(DateTime.now());
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: hight(context) * .1),
+              child: ElevatedButton(
+                onPressed: () {
+                  print("Button Pressed!");
+                  print("Source: ${sourceController.text}");
+                  print("Value: ${valueController.text}");
+                  print("Currency: ${currencyController.text}");
+                  print("Category: ${selectedCategory.value}");
+                  if (sourceController.text.isNotEmpty &&
+                      valueController.text.isNotEmpty &&
+                      currencyController.text.isNotEmpty &&
+                      selectedCategory.value != null) {
+                    final String formattedDate = DateFormat(
+                      'yyyy-MM-dd',
+                    ).format(DateTime.now());
 
-                  final newExpense = Expense(
-                    source: sourceController.text,
-                    price: double.tryParse(valueController.text) ?? 0.0,
-                    category: selectedCategory.value!,
-                    date: formattedDate,
-                    currency: currencyController.text.toUpperCase(),
-                    description: descriptionController.text.isEmpty
-                        ? null
-                        : descriptionController.text,
-                  );
+                    final newExpense = Expense(
+                      source: sourceController.text,
+                      price: double.tryParse(valueController.text) ?? 0.0,
+                      category: selectedCategory.value!,
+                      date: formattedDate,
+                      currency: currencyController.text.toUpperCase(),
+                      description: descriptionController.text.isEmpty
+                          ? null
+                          : descriptionController.text,
+                    );
 
-                  controller.addExpense(newExpense);
-                } else {
-                  Get.snackbar(
-                    "Input Error",
-                    "Please fill all required fields: Source, Amount, and Currency.",
-                    snackPosition: SnackPosition.BOTTOM,
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                backgroundColor: const Color(0xFF006000),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                    controller.addExpense(newExpense);
+                  } else {
+                    Get.snackbar(
+                      "Input Error",
+                      "Please fill all required fields: Source, Amount, and Currency.",
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                  backgroundColor: const Color(0xFF006000),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              ),
-              child: const Text(
-                "Add Expense",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                child: const Text(
+                  "Add",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

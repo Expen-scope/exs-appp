@@ -210,48 +210,51 @@ class _AddIncomesState extends State<AddIncomes> {
               ),
             ),
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                print("Button Pressed!");
-                print("Source: ${sourceController.text}");
-                print("Value: ${valueController.text}");
-                print("Currency: ${currencyController.text}");
-                print("Category: ${selectedCategory.value}");
-                if (sourceController.text.isNotEmpty &&
-                    valueController.text.isNotEmpty &&
-                    selectedCategory.value != null) {
-                  final newIncome = Income(
-                    source: sourceController.text,
-                    price: double.tryParse(valueController.text) ?? 0.0,
-                    category: selectedCategory.value!,
-                    date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-                    currency: currencyController.text.toUpperCase(),
-                    description: descriptionController.text.isEmpty
-                        ? null
-                        : descriptionController.text,
-                  );
-                  controller.addIncome(newIncome);
-                } else {
-                  Get.snackbar(
-                    "Input Error",
-                    "Please fill all required fields.",
-                    snackPosition: SnackPosition.BOTTOM,
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                backgroundColor: const Color(0xFF006000),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: hight(context) * .1),
+              child: ElevatedButton(
+                onPressed: () {
+                  print("Button Pressed!");
+                  print("Source: ${sourceController.text}");
+                  print("Value: ${valueController.text}");
+                  print("Currency: ${currencyController.text}");
+                  print("Category: ${selectedCategory.value}");
+                  if (sourceController.text.isNotEmpty &&
+                      valueController.text.isNotEmpty &&
+                      selectedCategory.value != null) {
+                    final newIncome = Income(
+                      source: sourceController.text,
+                      price: double.tryParse(valueController.text) ?? 0.0,
+                      category: selectedCategory.value!,
+                      date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                      currency: currencyController.text.toUpperCase(),
+                      description: descriptionController.text.isEmpty
+                          ? null
+                          : descriptionController.text,
+                    );
+                    controller.addIncome(newIncome);
+                  } else {
+                    Get.snackbar(
+                      "Input Error",
+                      "Please fill all required fields.",
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                  backgroundColor: const Color(0xFF006000),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              ),
-              child: const Text(
-                "Add Income",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                child: const Text(
+                  "Add",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

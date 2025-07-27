@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:abo_najib_2/controller/ChatController.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -53,6 +54,7 @@ class _MyCustomSplashScreenState extends State<MyCustomSplashScreen>
     Get.put(ExpencesController(), permanent: true);
     Get.put(ReminderController(), permanent: true);
     Get.put(FinancialController(), permanent: true);
+    Get.lazyPut(() => ChatController());
     Get.put(GoalController(), permanent: true);
     Get.lazyPut(() => LoginController());
     Get.lazyPut(() => RegisterController());

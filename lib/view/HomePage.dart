@@ -364,9 +364,9 @@ class HomePage extends StatelessWidget {
         height: 320,
         child: _buildBarChart(),
       ),
-      'savings_rate': _buildAnalysisCard(
-        key: const ValueKey('savings_rate'),
-        title: "Savings Rate",
+      'PFC': _buildAnalysisCard(
+        key: const ValueKey('PFC'),
+        title: "PFC",
         height: 320,
         child: _buildProjectionCard(),
       ),

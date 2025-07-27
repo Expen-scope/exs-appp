@@ -299,16 +299,18 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: hight(context) * .1),
                 child: Container(
-                  color: Color(0xFF006000),
                   child: ElevatedButton(
                     onPressed: saveGoal,
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size.fromHeight(50),
                       backgroundColor: Color(0xFF006000),
                       shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
                     ),
                     child: const Text(
-                      "Save Goal",
+                      "Add",
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),
