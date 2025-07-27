@@ -43,9 +43,7 @@ class GoalController extends GetxController {
         throw Exception('Failed to load goals: ${response.statusMessage}');
       }
     } catch (e) {
-      errorMessage.value = 'Error fetching goals: ${e.toString()}';
-      Get.snackbar('Error', errorMessage.value,
-          snackPosition: SnackPosition.BOTTOM);
+      print({"$e"});
     } finally {
       isLoading.value = false;
     }

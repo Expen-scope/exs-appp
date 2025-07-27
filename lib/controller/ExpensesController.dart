@@ -13,7 +13,6 @@ class ExpencesController extends GetxController {
   var expenseCategories = <String>[].obs;
   var isDataLoading = false.obs;
 
-  // final String baseUrl = "http://10.0.2.2:8000/api";
   final _storage = const FlutterSecureStorage();
   String? authToken;
 

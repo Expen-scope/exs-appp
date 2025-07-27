@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../const/Constants.dart';
 import '../model/User.dart';
 import '../utils/dialog_helper.dart';
+import 'ChatController.dart';
 import 'ExpensesController.dart';
 import 'FinancialController.dart';
 import 'ReminderController.dart';
@@ -59,7 +60,7 @@ class LoginController extends GetxController {
 
         await _saveAuthData(user, accessToken, n8nToken);
 
-        _showSuccessDialog();
+        _showSuccessDialogAndNavigate();
       } else {
         String errorMessage =
             response.data['message'] ?? 'Invalid email or password';
@@ -77,6 +78,14 @@ class LoginController extends GetxController {
       emailController.clear();
       passwordController.clear();
     }
+  }
+
+  void _showSuccessDialogAndNavigate() {
+    DialogHelper.showSuccessDialog(
+      title: "Success",
+      message: "You have been logged in successfully.",
+      onOkPressed: () => Get.offAllNamed('/HomePage'),
+    );
   }
 
   Future<void> _saveAuthData(
@@ -109,6 +118,7 @@ class LoginController extends GetxController {
 
     print('Access Token saved and all data reloaded successfully.');
     await Get.find<FinancialController>().refreshAllCalculations();
+    Get.find<ChatController>();
   }
 
   Future<void> logout() async {
@@ -146,14 +156,6 @@ class LoginController extends GetxController {
     DialogHelper.showErrorDialog(
       title: 'Error',
       message: 'An unknown error occurred: ${e.toString()}',
-    );
-  }
-
-  void _showSuccessDialog() {
-    DialogHelper.showSuccessDialog(
-      title: "Success",
-      message: "You have been logged in successfully.",
-      onOkPressed: () => Get.offAllNamed('/HomePage'),
     );
   }
 }

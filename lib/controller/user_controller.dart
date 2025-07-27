@@ -125,11 +125,9 @@ class UserController extends GetxController {
             message: response.data['message'] ?? 'Password change failed');
       }
     } on DioException catch (e) {
-      String errorMessage = e.response?.data['message'] ?? 'An error occurred.';
-      Get.snackbar('Error', errorMessage, snackPosition: SnackPosition.BOTTOM);
+      print({"$e"});
     } catch (e) {
-      Get.snackbar('Error', 'An unexpected error: ${e.toString()}',
-          snackPosition: SnackPosition.BOTTOM);
+      print({"$e"});
     }
   }
 }

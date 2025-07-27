@@ -64,7 +64,7 @@ class FinancialController extends GetxController {
 
   var analysisWidgetOrder = <String>[
     'income_vs_expense',
-    'savings_rate',
+    'PFC',
     'category_breakdown',
     'summary_table',
   ].obs;
@@ -135,7 +135,6 @@ class FinancialController extends GetxController {
   }
 
   void _processData() {
-    print("--- Starting _processData ---");
     print("Incomes count: ${incomesController.incomes.length}");
     print("Expenses count: ${expensesController.listExpenses.length}");
 
