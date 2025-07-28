@@ -42,7 +42,7 @@ class ChatController extends GetxController {
   );
 
   final Dio.Dio _n8nDio = Dio.Dio(Dio.BaseOptions(
-    baseUrl: "https://khaderhashh.app.n8n.cloud/",
+    baseUrl: "https://khaderhashh.app.n8n.cloud",
     contentType: Dio.Headers.jsonContentType,
     validateStatus: (status) => status! < 500,
   ));
@@ -111,6 +111,7 @@ class ChatController extends GetxController {
           aiResponseText =
               aiResponseText.split("srcdoc=\"{")[1].split("}\"")[0];
           aiResponseText = aiResponseText.replaceAll('*', '');
+          aiResponseText = aiResponseText.replaceAll('&quot;', '');
         }
 
         messages.add(ChatMessage(text: aiResponseText, isUser: false));

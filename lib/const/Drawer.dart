@@ -114,12 +114,16 @@ void _showLogoutDialog(BuildContext context) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
+      backgroundColor: Color(0xFFEAEAEA),
       title: const Text('Log Out'),
       content: const Text('Are you sure you want to log out?'),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: const Text(
+            'Cancel',
+            style: TextStyle(color: Color(0xFF006000)),
+          ),
         ),
         TextButton(
           onPressed: () async {

@@ -90,11 +90,14 @@ class ChatPage extends StatelessWidget {
                   child: TextField(
                     controller: controller.textController,
                     onChanged: (text) => controller.inputText.value = text,
+                    keyboardType: TextInputType.multiline,
+                    minLines: 1,
+                    maxLines: 5,
                     decoration: InputDecoration(
                       hintText: 'Type a message',
                       border: InputBorder.none,
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 20.0),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 10.0),
                     ),
                   ),
                 ),

@@ -133,7 +133,7 @@ class RegisterController extends GetxController {
   void showSuccessDialog() {
     DialogHelper.showSuccessDialog(
       title: "success",
-      message: "The account has been created successfully",
+      message: "Now, please verify your account to complete the setup.",
       onOkPressed: () {
         Get.toNamed("/OtpVerificationPage");
       },

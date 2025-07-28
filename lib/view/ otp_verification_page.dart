@@ -23,9 +23,7 @@ class OtpVerificationPage extends StatelessWidget {
       var response = await HttpHel.verifyOtp(email, otpCode.value);
       if (response['success']) {
         Get.offAllNamed("/Login");
-      } else {
-        Get.snackbar("Error", response['message']);
-      }
+      } else {}
 
       await Future.delayed(Duration(seconds: 2)); // simulate API call
       Get.snackbar("Success", "OTP Verified. Account activated.");
